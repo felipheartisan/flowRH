@@ -1,7 +1,5 @@
 import 'package:flow_rh/data/database_provider.dart';
-import 'package:flow_rh/domain/models/avaliacoes_funcionarios.dart';
 import 'package:flow_rh/domain/models/funcionarios.dart';
-import 'package:flow_rh/domain/repositories/avaliacoes_repository.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class FuncionarioRepository{

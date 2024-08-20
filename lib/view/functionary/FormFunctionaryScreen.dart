@@ -1,4 +1,4 @@
-import 'dart:async';
+
 
 import 'package:flow_rh/data/database_provider.dart';
 import 'package:flow_rh/domain/models/funcionarios.dart';
@@ -15,6 +15,7 @@ class FormFunctionaryScreen extends StatefulWidget {
 }
 
 class _FormFunctionaryScreenState extends State<FormFunctionaryScreen> {
+      // ignore: unused_field
       List<Funcionario> _results = [];
 
   DatabaseProvider databaseProvider = DatabaseProvider();

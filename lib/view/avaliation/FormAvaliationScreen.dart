@@ -1,11 +1,7 @@
 import 'package:flow_rh/data/database_provider.dart';
 import 'package:flow_rh/domain/models/avaliacoes_funcionarios.dart';
-import 'package:flow_rh/domain/models/beneficios.dart';
-import 'package:flow_rh/domain/models/beneficios_funcionarios.dart';
 import 'package:flow_rh/domain/models/funcionarios.dart';
 import 'package:flow_rh/domain/repositories/avaliacoes_repository.dart';
-import 'package:flow_rh/domain/repositories/beneficios_funcionarios_repository.dart';
-import 'package:flow_rh/domain/repositories/beneficios_repository.dart';
 import 'package:flow_rh/domain/repositories/funcionario_repository.dart';
 import 'package:flow_rh/view/home_screen.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +14,7 @@ class FormAvaliationScreen extends StatefulWidget {
 }
 
 class _FormAvaliationScreenState extends State<FormAvaliationScreen> {
+   // ignore: unused_field
    List<Avaliacao> _results = [];
    List<Funcionario> _funcionarios = [];
 
@@ -58,7 +55,6 @@ class _FormAvaliationScreenState extends State<FormAvaliationScreen> {
   }
 
 
-  final GlobalKey<FormState> _key = GlobalKey<FormState>();
 
   TextEditingController _notaController = TextEditingController();
   TextEditingController _cursos_feitosController = TextEditingController();

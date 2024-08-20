@@ -1,6 +1,5 @@
 import 'package:flow_rh/data/database_provider.dart';
 import 'package:flow_rh/domain/models/beneficios.dart';
-import 'package:flow_rh/domain/models/funcionarios.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class BeneficiosRepository{

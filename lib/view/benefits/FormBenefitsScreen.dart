@@ -11,6 +11,7 @@ class FormBenefitsScreen extends StatefulWidget {
 }
 
 class _FormBenefitsScreenState extends State<FormBenefitsScreen> {
+   // ignore: unused_field
    List<Beneficio> _results = [];
 
   DatabaseProvider databaseProvider = DatabaseProvider();

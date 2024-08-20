@@ -1,10 +1,7 @@
 import 'package:flow_rh/data/database_provider.dart';
 import 'package:flow_rh/domain/models/avaliacoes_funcionarios.dart';
-import 'package:flow_rh/domain/models/cash.dart';
 import 'package:flow_rh/domain/repositories/avaliacoes_repository.dart';
-import 'package:flow_rh/domain/repositories/cash_repository.dart';
 import 'package:flow_rh/view/avaliation/FormAvaliationScreen.dart';
-import 'package:flow_rh/view/cashflow/FormCashScreen.dart';
 import 'package:flow_rh/view/widgets/search_widget.dart';
 import 'package:flutter/material.dart';
 

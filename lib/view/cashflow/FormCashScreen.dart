@@ -11,6 +11,7 @@ class FormCashScreen extends StatefulWidget {
 }
 
 class _FormCashScreenState extends State<FormCashScreen> {  
+    // ignore: unused_field
     List<Cash> _results = [];
 
   DatabaseProvider databaseProvider = DatabaseProvider();

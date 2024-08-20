@@ -16,7 +16,6 @@ class FormFuncBeneScreen extends StatefulWidget {
 }
 
 class _FormFuncBeneScreenState extends State<FormFuncBeneScreen> {
-   List<BeneficiosFuncionarios> _results = [];
    List<Funcionario> _funcionarios = [];
    List<Beneficio> _beneficios = [];
   
@@ -38,7 +37,7 @@ class _FormFuncBeneScreenState extends State<FormFuncBeneScreen> {
     funcionarioRepository = FuncionarioRepository(databaseProvider);
     beneficiosRepository = BeneficiosRepository(databaseProvider);
     
-    _results = await beneficiosFuncRepository.findAll();
+    // ignore: unused_local_variable
     List<BeneficiosFuncionarios> res = await beneficiosFuncRepository.findAll();
 
     
@@ -51,7 +50,6 @@ class _FormFuncBeneScreenState extends State<FormFuncBeneScreen> {
     List<Beneficio> ben = await beneficiosRepository.findAll();
    
     setState(() {
-      _results = res;
       _funcionarios = fun;
       _beneficios = ben;
     });
@@ -59,8 +57,6 @@ class _FormFuncBeneScreenState extends State<FormFuncBeneScreen> {
 
   }
 
-
-  final GlobalKey<FormState> _key = GlobalKey<FormState>();
   
   Beneficio? _selectedBeneficio;
   Funcionario? _selectedFuncionario;
@@ -203,9 +199,9 @@ void _salvar() async {
                 'Beneficio & Funcionario vinculados'),
           ),);
            Navigator.pushNamed(context, HomeScreen.routName);
+           // ignore: unused_local_variable
            List<BeneficiosFuncionarios> res = await beneficiosFuncRepository.findAll();
                                setState(() {
-                                 _results = res;
                                });
         }else{
           await beneficiosFuncRepository.update(_beneficio_funcionario);
@@ -215,9 +211,9 @@ void _salvar() async {
                 'Beneficio & Funcionario atualizados'),
           ),);
            Navigator.pushNamed(context, HomeScreen.routName);
+           // ignore: unused_local_variable
            List<BeneficiosFuncionarios> res = await beneficiosFuncRepository.findAll();
                                setState(() {
-                                 _results = res;
                                });
         }
       

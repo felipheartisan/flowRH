@@ -2,8 +2,6 @@
 import 'dart:convert';
 import 'dart:core';
 
-import 'package:flow_rh/domain/models/beneficios.dart';
-import 'package:flow_rh/domain/models/funcionarios.dart';
 
 class BeneficiosFuncionarios {
   int? id_beneficios_funcionarios;
