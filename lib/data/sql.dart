@@ -1,5 +1,6 @@
 class Config{
   static const String sql = '''
+PRAGMA foreign_keys = ON;
 
 -- Tabela `Funcionarios`
 CREATE TABLE IF NOT EXISTS `Funcionarios` (
@@ -21,24 +22,18 @@ CREATE TABLE IF NOT EXISTS `Funcionarios` (
 
 -- Tabela `Login`
 CREATE TABLE IF NOT EXISTS `Login` (
-  `usuario` INTEGER PRIMARY KEY,
-  `token` TEXT UNIQUE NOT NULL
+  `idLogin` INTEGER PRIMARY KEY,
+  `usuario` TEXT ,
+  `token` TEXT 
 );
 
--- Tabela `Despesas`
-CREATE TABLE IF NOT EXISTS `Despesas` (
-  `idDespesas` INTEGER PRIMARY KEY,
+-- Tabela `Cash`
+CREATE TABLE IF NOT EXISTS `Cash` (
+  `idCash` INTEGER PRIMARY KEY,
   `valor` TEXT,
   `data` TEXT,
-  `categoria` TEXT
-);
-
--- Tabela `Receitas`
-CREATE TABLE IF NOT EXISTS `Receitas` (
-  `idReceitas` INTEGER PRIMARY KEY,
-  `valor` TEXT,
-  `data` TEXT,
-  `categoria` TEXT
+  `categoria` TEXT,
+  `descricao` TEXT
 );
 
 -- Tabela `Beneficios`
@@ -57,17 +52,17 @@ CREATE TABLE IF NOT EXISTS `Avaliacoes` (
   `atividades` TEXT,
   `mes_referencia` TEXT,
   `ano_referencia` TEXT,
-  `Funcionarios_idFuncionarios` INTEGER,
-  FOREIGN KEY (`Funcionarios_idFuncionarios`) REFERENCES `Funcionarios` (`idFuncionarios`)
+  `idFuncionarios` INTEGER,
+  FOREIGN KEY (`idFuncionarios`) REFERENCES `Funcionarios` (`idFuncionarios`) ON DELETE RESTRICT
 );
 
 -- Tabela `Beneficios_has_Funcionarios`
 CREATE TABLE IF NOT EXISTS `Beneficios_has_Funcionarios` (
-  `Beneficios_idBeneficios` INTEGER,
-  `Funcionarios_idFuncionarios` INTEGER,
-  PRIMARY KEY (`Beneficios_idBeneficios`, `Funcionarios_idFuncionarios`),
-  FOREIGN KEY (`Beneficios_idBeneficios`) REFERENCES `Beneficios` (`idBeneficios`),
-  FOREIGN KEY (`Funcionarios_idFuncionarios`) REFERENCES `Funcionarios` (`idFuncionarios`)
+  `id_beneficios_funcionarios` INTEGER PRIMARY KEY,
+  `idBeneficios` INTEGER,
+  `idFuncionarios` INTEGER,
+  FOREIGN KEY (`idBeneficios`) REFERENCES `Beneficios` (`idBeneficios`) ON DELETE CASCADE,
+  FOREIGN KEY (`idFuncionarios`) REFERENCES `Funcionarios` (`idFuncionarios`) ON DELETE CASCADE
 );
 
 ''';

@@ -1,5 +1,7 @@
 import 'package:flow_rh/data/database_provider.dart';
+import 'package:flow_rh/domain/models/avaliacoes_funcionarios.dart';
 import 'package:flow_rh/domain/models/funcionarios.dart';
+import 'package:flow_rh/domain/repositories/avaliacoes_repository.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class FuncionarioRepository{
@@ -8,18 +10,29 @@ class FuncionarioRepository{
   FuncionarioRepository(this.databaseProvider);
 
   Future<int> insert(Funcionario entity) async{
-    await databaseProvider.open();
-    Database dt = databaseProvider.database;
-    return await dt.insert("Funcionarios", entity.toMap());
+    try{
+      print("salvou 000");
+       await databaseProvider.open();
+      Database dt = databaseProvider.database;
+      return await dt.insert("Funcionarios", entity.toMap());
+    } on Exception catch (e){
+      throw Exception(e);
+    }finally{
+      if (databaseProvider.database.isOpen){
+        databaseProvider.database.close();
+      }
+    }
+   
     
   }
 
   Future<int>  delete(Funcionario entity) async{
     await databaseProvider.open();
     Database dt = databaseProvider.database;
-    return await dt.delete("Funcionarios", 
+    return await dt.delete("Funcionarios",
                   where : "idFuncionarios = ?", 
                   whereArgs:  ["${entity.idFuncionarios}"]);
+                 
   }
 
   Future<int>  update(Funcionario entity) async{
@@ -67,4 +80,5 @@ class FuncionarioRepository{
      
     return funcionarioResults;
   }  
+
 }

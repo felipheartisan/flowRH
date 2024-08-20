@@ -18,10 +18,13 @@ class DatabaseProvider{
         path,
         version: 1,
         onCreate: (db, version) => _create(db, version));
+        
     }
   }
 
   Future<void> _create(Database db, int version) async{
+      await db.execute('PRAGMA foreign_keys = ON');
       return db.execute(Config.sql);
+      
   }
 }
