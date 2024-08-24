@@ -1,5 +1,8 @@
 import 'package:flow_rh/data/database_provider.dart';
+import 'package:flow_rh/domain/models/beneficios_funcionarios.dart';
 import 'package:flow_rh/domain/models/funcionarios.dart';
+import 'package:flow_rh/domain/repositories/avaliacoes_repository.dart';
+import 'package:flow_rh/domain/repositories/beneficios_funcionarios_repository.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class FuncionarioRepository{
@@ -27,6 +30,13 @@ class FuncionarioRepository{
   Future<int>  delete(Funcionario entity) async{
     await databaseProvider.open();
     Database dt = databaseProvider.database;
+    AvaliacoesRepository avaliacoesRepository = AvaliacoesRepository(databaseProvider);
+    BeneficiosFuncionariosRepository beneficiosFuncionarios = BeneficiosFuncionariosRepository(databaseProvider);
+
+
+    beneficiosFuncionarios.deletebyfunc(entity);
+    avaliacoesRepository.deletebyfunc(entity);
+    
     return await dt.delete("Funcionarios",
                   where : "idFuncionarios = ?", 
                   whereArgs:  ["${entity.idFuncionarios}"]);

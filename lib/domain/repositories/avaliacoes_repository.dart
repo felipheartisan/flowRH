@@ -1,5 +1,6 @@
 import 'package:flow_rh/data/database_provider.dart';
 import 'package:flow_rh/domain/models/avaliacoes_funcionarios.dart';
+import 'package:flow_rh/domain/models/funcionarios.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class AvaliacoesRepository{
@@ -29,6 +30,15 @@ class AvaliacoesRepository{
                   where : "idAvaliacoes = ?", 
                   whereArgs:  ["${entity.idAvaliacoes}"]);
   }
+
+  Future<int>  deletebyfunc(Funcionario entity) async{
+    await databaseProvider.open();
+    Database dt = databaseProvider.database;
+    return await dt.delete("Avaliacoes", 
+                  where : "idFuncionarios = ?", 
+                  whereArgs:  ["${entity.idFuncionarios}"]);
+  }
+
 
   Future<int>  update(Avaliacao entity) async{
     await databaseProvider.open();

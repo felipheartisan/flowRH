@@ -71,7 +71,7 @@ class _SearchBenefitsScreenState extends State<SearchBenefitsScreen> {
         leading: IconButton(icon: Icon(Icons.delete),
         onPressed: () async {
           Beneficio beneficio = _results_filtred[index];
-          _delete(beneficio);
+          beneficiosRepository.delete(beneficio);
           // List<Beneficio> res = await beneficiosRepository.findAll();
           // setState(() {
           //   _results = res;
@@ -116,20 +116,20 @@ class _SearchBenefitsScreenState extends State<SearchBenefitsScreen> {
     }
   }
 
-  void _delete(beneficio){
+  // void _delete(beneficio){
 
-    BeneficiosFuncionarios funcBene = BeneficiosFuncionarios();
+  //   BeneficiosFuncionarios funcBene = BeneficiosFuncionarios();
     
     
 
-    for (funcBene in all_funcBene){
-      if (funcBene.idBeneficios == beneficio.idBeneficios){
-        funcbeneRepository.delete(funcBene);
-      }
-    }
+  //   for (funcBene in all_funcBene){
+  //     if (funcBene.idBeneficios == beneficio.idBeneficios){
+  //       funcbeneRepository.delete(funcBene);
+  //     }
+  //   }
 
-    beneficiosRepository.delete(beneficio);
-  }
+  //   beneficiosRepository.delete(beneficio);
+  // }
 
 
 }

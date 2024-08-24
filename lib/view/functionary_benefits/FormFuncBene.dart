@@ -64,13 +64,13 @@ class _FormFuncBeneScreenState extends State<FormFuncBeneScreen> {
    TextEditingController _funcionarioController = TextEditingController();
    TextEditingController _beneficioController = TextEditingController();
 
-   final BeneficiosFuncionarios _beneficio_funcionario = BeneficiosFuncionarios();
+   BeneficiosFuncionarios _beneficio_funcionario = BeneficiosFuncionarios();
 
   @override
 
    Widget build(BuildContext context) {
     if (ModalRoute.of(context) != null && ModalRoute.of(context)!.settings.arguments != null) {
-      BeneficiosFuncionarios _beneficio_funcionario = ModalRoute.of(context)!.settings.arguments as BeneficiosFuncionarios;
+    _beneficio_funcionario = ModalRoute.of(context)!.settings.arguments as BeneficiosFuncionarios;
 
       _funcionarioController.text = _beneficio_funcionario.nome_funcionario!;
       _beneficioController.text = _beneficio_funcionario.descricao_beneficio!; 
@@ -178,7 +178,7 @@ class _FormFuncBeneScreenState extends State<FormFuncBeneScreen> {
   }
 
 void _salvar() async {
-    if (_selectedBeneficio != null && _selectedFuncionario != null) {
+
         print('chamou');
 
         _funcionarioController.text = _selectedFuncionario!.nome!;
@@ -220,7 +220,7 @@ void _salvar() async {
         
       
         
-    }
+
   }
 }
 

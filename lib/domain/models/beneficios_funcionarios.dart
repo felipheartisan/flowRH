@@ -2,6 +2,8 @@
 import 'dart:convert';
 import 'dart:core';
 
+import 'package:flow_rh/data/database_provider.dart';
+
 
 class BeneficiosFuncionarios {
   int? id_beneficios_funcionarios;
@@ -9,7 +11,7 @@ class BeneficiosFuncionarios {
   int? idFuncionarios;
   String? nome_funcionario;
   String? descricao_beneficio;
-  BeneficiosFuncionarios({
+  BeneficiosFuncionarios( {
     this.id_beneficios_funcionarios,
     this.idBeneficios,
     this.idFuncionarios,

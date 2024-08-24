@@ -73,7 +73,7 @@ class _SearchFunctionaryScreenState extends State<SearchFunctionaryScreen> {
         leading: IconButton(icon: Icon(Icons.delete),
         onPressed: () async {
           Funcionario funcionario = _results_filtred[index];
-          _delete(funcionario);
+          funcionarioRepository.delete(funcionario);
           // List<Funcionario> res = await funcionarioRepository.findAll();
           // setState(() {
           //   _results = res;
@@ -118,26 +118,26 @@ class _SearchFunctionaryScreenState extends State<SearchFunctionaryScreen> {
     }
   }
 
- void _delete(funcionario){
+//  void _delete(funcionario){
       
-    Avaliacao avaliacao = Avaliacao();
-    BeneficiosFuncionarios funcBene = BeneficiosFuncionarios();
+//     Avaliacao avaliacao = Avaliacao();
+//     BeneficiosFuncionarios funcBene = BeneficiosFuncionarios();
     
     
-    for (avaliacao in all_avaliacoes){
-      if (avaliacao.IdFuncionarios == funcionario.idFuncionarios){
-        avaliacoesRepository.delete(avaliacao);
-      }
-    }
+//     for (avaliacao in all_avaliacoes){
+//       if (avaliacao.IdFuncionarios == funcionario.idFuncionarios){
+//         avaliacoesRepository.delete(avaliacao);
+//       }
+//     }
 
-    for (funcBene in all_funcBene){
-      if (funcBene.idFuncionarios == funcionario.idFuncionarios){
-        funcbeneRepository.delete(funcBene);
-      }
-    }
+//     for (funcBene in all_funcBene){
+//       if (funcBene.idFuncionarios == funcionario.idFuncionarios){
+//         funcbeneRepository.delete(funcBene);
+//       }
+//     }
 
-    funcionarioRepository.delete(funcionario);
-  }
+//     funcionarioRepository.delete(funcionario);
+//   }
 
   
 }
