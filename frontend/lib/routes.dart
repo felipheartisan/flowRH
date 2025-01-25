@@ -1,3 +1,4 @@
+import 'package:flow_rh/domain/controllers/login_controller.dart';
 import 'package:flow_rh/view/avaliation/FormAvaliationScreen.dart';
 import 'package:flow_rh/view/avaliation/SearchAvaliationScreen.dart';
 import 'package:flow_rh/view/benefits/FormBenefitsScreen.dart';

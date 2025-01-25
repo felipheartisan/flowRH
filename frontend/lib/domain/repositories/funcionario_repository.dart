@@ -1,92 +1,52 @@
+import 'dart:convert';
+
 import 'package:flow_rh/data/database_provider.dart';
-import 'package:flow_rh/domain/models/beneficios_funcionarios.dart';
+import 'package:flow_rh/domain/http/http_client.dart';
 import 'package:flow_rh/domain/models/funcionarios.dart';
-import 'package:flow_rh/domain/repositories/avaliacoes_repository.dart';
-import 'package:flow_rh/domain/repositories/beneficios_funcionarios_repository.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:flow_rh/domain/models/response_model.dart';
+import 'package:flow_rh/domain/models/response_model.dart';
+import 'package:flow_rh/domain/models/response_model.dart';
+import 'package:flow_rh/domain/models/usuario_model.dart';
+import 'package:flow_rh/domain/models/response_model.dart';
+import 'package:flow_rh/domain/viewmodel/login_viewmodel.dart';
+import 'package:sqflite/sqflite.dart';
 
-class FuncionarioRepository{
-  late DatabaseProvider databaseProvider;
+import '../models/response_model.dart';
 
-  FuncionarioRepository(this.databaseProvider);
+abstract class IFuncionarioRepository {
 
-  Future<int> insert(Funcionario entity) async{
-    try{
-      print("salvou 000");
-       await databaseProvider.open();
-      Database dt = databaseProvider.database;
-      return await dt.insert("Funcionarios", entity.toMap());
-    } on Exception catch (e){
-      throw Exception(e);
-    }finally{
-      if (databaseProvider.database.isOpen){
-        databaseProvider.database.close();
-      }
-    }
-   
+  Future<List<ResponseModel<Funcionario>>> listarFuncionarios();
+  
+}
+
+class FuncionarioRepository extends IFuncionarioRepository {
+  final IHttpClient client;
+
+  FuncionarioRepository({required this.client});
+  
+  @override
+  Future<List<ResponseModel<Funcionario>>> listarFuncionarios() async {
     
-  }
+    var responseJson = await client.get(
+        url: 'http://localhost:5003/api/Funcionario/ListarFuncionarios');
 
-  Future<int>  delete(Funcionario entity) async{
-    await databaseProvider.open();
-    Database dt = databaseProvider.database;
-    AvaliacoesRepository avaliacoesRepository = AvaliacoesRepository(databaseProvider);
-    BeneficiosFuncionariosRepository beneficiosFuncionarios = BeneficiosFuncionariosRepository(databaseProvider);
+    if (responseJson != null) {
+      final responseMap = jsonDecode(responseJson.body);
 
-
-    beneficiosFuncionarios.deletebyfunc(entity);
-    avaliacoesRepository.deletebyfunc(entity);
-    
-    return await dt.delete("Funcionarios",
-                  where : "idFuncionarios = ?", 
-                  whereArgs:  ["${entity.idFuncionarios}"]);
-                 
-  }
-
-  Future<int>  update(Funcionario entity) async{
-    await databaseProvider.open();
-    Database dt = databaseProvider.database;
-    return await dt.update("Funcionarios",
-                    entity.toMap(), 
-                    where : "idFuncionarios = ?", 
-                  whereArgs:  ["${entity.idFuncionarios}"]);
-  }
-
-  Future<Funcionario> findById(int idFuncionarios) async{
-    await databaseProvider.open();
-    Database dt = databaseProvider.database;
-    List<Map<String, Object?>> result = await dt.rawQuery("SELECT * FROM Funcionarios WHERE idFuncionarios = $idFuncionarios");
-    //Se retornou resultados
-    var funcionario = Funcionario();
-    if (result.isNotEmpty){
-        Map<String, Object?> item = result[0];
-        funcionario.idFuncionarios = item["idFuncionarios"] as int;
-        funcionario.nome = item["nome"] as String;
-        
+      return responseMap.map<ResponseModel<Funcionario>>((item) {
+        return ResponseModel<Funcionario>(
+          dados: [Funcionario.fromMap(item)],
+          status: item['status'] as bool,
+          mensagem: item['mensagem'] as String,
+        );
+      }).toList();
+    } else {
+      throw Exception('Failed to load users');
     }
-    return funcionario;
+
+
+
   }
 
-  /// Busca todos os registro do banco de dados convertido para
-  /// um objeto do tipo List<Estado>.   
-  Future<List<Funcionario>> findAll() async{
-    await databaseProvider.open();
-    Database dt = databaseProvider.database;
-    List<Map<String, Object?>> result = await dt.rawQuery("SELECT * FROM Funcionarios");
-        
-    List<Funcionario> funcionarioResults = [];
-    
-    //Se retornou resultados
-    if (result.isNotEmpty){
-        for (int i = 0; i < result.length; i++){            
-            Map<String, Object?> item = result[i];
-            //Convertendo um Map para o objeto apropriado
-            Funcionario funcionario = Funcionario.fromMap(item);
-            funcionarioResults.add(funcionario);
-        }
-    }
-     
-    return funcionarioResults;
-  }  
-
+ 
 }

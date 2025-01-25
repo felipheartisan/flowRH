@@ -30,34 +30,34 @@ class _FormFuncBeneScreenState extends State<FormFuncBeneScreen> {
   @override
   void initState(){
     super.initState();
-    initDatabase();
+    // initDatabase();
   }
 
-  void initDatabase() async {
-    await databaseProvider.open();
-    beneficiosFuncRepository = BeneficiosFuncionariosRepository(databaseProvider);
-    funcionarioRepository = FuncionarioRepository(databaseProvider);
-    beneficiosRepository = BeneficiosRepository(databaseProvider);
+  // void initDatabase() async {
+  //   await databaseProvider.open();
+  //   beneficiosFuncRepository = BeneficiosFuncionariosRepository(databaseProvider);
+  //   funcionarioRepository = FuncionarioRepository(databaseProvider);
+  //   beneficiosRepository = BeneficiosRepository(databaseProvider);
     
-    // ignore: unused_local_variable
-    List<BeneficiosFuncionarios> res = await beneficiosFuncRepository.findAll();
+  //   // ignore: unused_local_variable
+  //   List<BeneficiosFuncionarios> res = await beneficiosFuncRepository.findAll();
 
     
 
-    _funcionarios = await funcionarioRepository.findAll();
-    List<Funcionario> fun = await funcionarioRepository.findAll();
+  //   _funcionarios = await funcionarioRepository.findAll();
+  //   List<Funcionario> fun = await funcionarioRepository.findAll();
 
 
-    _beneficios = await beneficiosRepository.findAll();
-    List<Beneficio> ben = await beneficiosRepository.findAll();
+  //   _beneficios = await beneficiosRepository.findAll();
+  //   List<Beneficio> ben = await beneficiosRepository.findAll();
    
-    setState(() {
-      _funcionarios = fun;
-      _beneficios = ben;
-    });
+  //   setState(() {
+  //     _funcionarios = fun;
+  //     _beneficios = ben;
+  //   });
 
 
-  }
+  // }
 
   
   Beneficio? _selectedBeneficio;

@@ -29,32 +29,32 @@ class _FormAvaliationScreenState extends State<FormAvaliationScreen> {
   @override
   void initState(){
     super.initState();
-    initDatabase();
+    // initDatabase();
   }
 
-  void initDatabase() async {
-    await databaseProvider.open();
-    avaliacaoRepository = AvaliacoesRepository(databaseProvider);
-    funcionarioRepository = FuncionarioRepository(databaseProvider);
+  // void initDatabase() async {
+  //   await databaseProvider.open();
+  //   avaliacaoRepository = AvaliacoesRepository(databaseProvider);
+  //   funcionarioRepository = FuncionarioRepository(databaseProvider);
 
     
-    _results = await avaliacaoRepository.findAll();
-    List<Avaliacao> res = await avaliacaoRepository.findAll();
+  //   _results = await avaliacaoRepository.findAll();
+  //   List<Avaliacao> res = await avaliacaoRepository.findAll();
 
     
 
-    _funcionarios = await funcionarioRepository.findAll();
-    List<Funcionario> fun = await funcionarioRepository.findAll();
+  //   _funcionarios = await funcionarioRepository.findAll();
+  //   List<Funcionario> fun = await funcionarioRepository.findAll();
 
    
-    setState(() {
-      _results = res;
-      _funcionarios = fun;
+  //   setState(() {
+  //     _results = res;
+  //     _funcionarios = fun;
 
-    });
+  //   });
 
 
-  }
+  // }
 
 
 

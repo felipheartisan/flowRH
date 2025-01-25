@@ -16,6 +16,7 @@ class MainApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: LoginScreen.routName,
       routes: Routes.routes,
+      
     );
   }
   

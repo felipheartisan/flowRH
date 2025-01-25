@@ -1,30 +1,32 @@
-
-import 'package:flow_rh/data/database_provider.dart';
-import 'package:flow_rh/domain/repositories/login_repository.dart';
-import 'package:flow_rh/view/home_screen.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flow_rh/domain/http/http_client.dart';
+import 'package:flow_rh/domain/models/response_model.dart';
+import 'package:flow_rh/domain/models/usuario_model.dart';
+import 'package:flow_rh/domain/viewmodel/login_viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 
+import 'package:flow_rh/data/database_provider.dart';
+import 'package:flow_rh/domain/controllers/login_controller.dart';
+import 'package:flow_rh/domain/repositories/login_repository.dart';
+import 'package:flow_rh/view/home_screen.dart';
+
 class LoginScreen extends StatelessWidget {
   static const String routName = "login";
-
   final TextEditingController _usuarioController = TextEditingController();
-  final TextEditingController _tokenController = TextEditingController();
+  final TextEditingController _senhaController = TextEditingController();
 
-  DatabaseProvider databaseProvider = DatabaseProvider();
-  late LoginRepository loginRepository;
+  final LoginController loginController =
+      LoginController(LoginRepository(client: HttpClient()));
 
-  LoginScreen({super.key});
-
-  void initDatabase() async {
-    await databaseProvider.open();
-    loginRepository = LoginRepository(databaseProvider);
-  }
+  LoginScreen({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    initDatabase();
     return Scaffold(
       body: Stack(
         children: [
@@ -34,7 +36,6 @@ class LoginScreen extends StatelessWidget {
               gradient: LinearGradient(
                 colors: [Colors.blueAccent, Colors.purpleAccent],
                 begin: Alignment.topLeft,
-                
                 end: Alignment.bottomRight,
               ),
             ),
@@ -63,7 +64,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20.0),
                   _buildTextField(
-                    controller: _tokenController,
+                    controller: _senhaController,
                     label: 'Token',
                     icon: Icons.lock,
                     obscureText: true,
@@ -72,22 +73,29 @@ class LoginScreen extends StatelessWidget {
                   // Login Button
                   ElevatedButton(
                     onPressed: () async {
-                      
-                      bool isValidUser = await loginRepository.validateUser(_usuarioController.text,_tokenController.text);
-                      print(isValidUser);
-                      if (isValidUser) {
+                      var loginViewModel = LoginViewModel(
+                        Login: _usuarioController.text,
+                        Password: _senhaController.text,
+                      );
+
+                      final response =
+                          await loginController.autenticar(loginViewModel);
+
+                      if (response.status ?? false) {
                         Navigator.pushNamed(context, HomeScreen.routName);
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Usuário ou senha inválidos'),
+                          SnackBar(
+                            content: Text(response.mensagem ?? ''),
                           ),
                         );
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.deepPurple, // Correção: 'primary' substituído por 'backgroundColor'
-                      padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 30.0),
+                      backgroundColor: Colors
+                          .deepPurple, // Correção: 'primary' substituído por 'backgroundColor'
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 15.0, horizontal: 30.0),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0),
                       ),
@@ -106,7 +114,11 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTextField({required TextEditingController controller,required String label, required IconData icon, bool obscureText = false}) {
+  Widget _buildTextField(
+      {required TextEditingController controller,
+      required String label,
+      required IconData icon,
+      bool obscureText = false}) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.2),
@@ -129,8 +141,4 @@ class LoginScreen extends StatelessWidget {
       ),
     );
   }
-
-
 }
-
-

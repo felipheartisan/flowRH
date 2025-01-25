@@ -1,7 +1,10 @@
 import 'package:flow_rh/data/database_provider.dart';
+import 'package:flow_rh/domain/controllers/funcionario_controller.dart';
+import 'package:flow_rh/domain/http/http_client.dart';
 import 'package:flow_rh/domain/models/avaliacoes_funcionarios.dart';
 import 'package:flow_rh/domain/models/beneficios_funcionarios.dart';
 import 'package:flow_rh/domain/models/funcionarios.dart';
+import 'package:flow_rh/domain/models/response_model.dart';
 import 'package:flow_rh/domain/repositories/avaliacoes_repository.dart';
 import 'package:flow_rh/domain/repositories/beneficios_funcionarios_repository.dart';
 import 'package:flow_rh/domain/repositories/funcionario_repository.dart';
@@ -19,6 +22,10 @@ class SearchFunctionaryScreen extends StatefulWidget{
 }
 
 class _SearchFunctionaryScreenState extends State<SearchFunctionaryScreen> {
+
+    final FuncionarioController funcionarioController =
+      FuncionarioController(FuncionarioRepository(client: HttpClient()));
+
   List<Funcionario> _results = [];
   List<Funcionario> _results_filtred = [];
 
@@ -37,16 +44,28 @@ class _SearchFunctionaryScreenState extends State<SearchFunctionaryScreen> {
   }
 
   void initDatabase() async {
-    await databaseProvider.open();
-    funcionarioRepository = FuncionarioRepository(databaseProvider);
-    avaliacoesRepository = AvaliacoesRepository(databaseProvider);
-    funcbeneRepository = BeneficiosFuncionariosRepository(databaseProvider);
+    
+    // List<Funcionario> res = await funcionarioRepository.findAll();
 
-    List<Funcionario> res = await funcionarioRepository.findAll();
+    // all_avaliacoes = await avaliacoesRepository.findAll();
+    // all_funcBene = await funcbeneRepository.findAll();
 
-    all_avaliacoes = await avaliacoesRepository.findAll();
-    all_funcBene = await funcbeneRepository.findAll();
+    // setState(() {
+    //   _results = res;
+    //   _results_filtred = res;
+    // });
 
+    final response = await funcionarioController.listarFuncionarios();
+    List<Funcionario> res = response.dados ?? [];
+    setState(() {
+      _results = res;
+      _results_filtred = res;
+    });
+  }
+  Future<void> _buscarTodos() async {
+    //Atualiza a lista de pesquisa novamente
+    final response = await funcionarioController.listarFuncionarios();
+    List<Funcionario> res = response.dados ?? [];
     setState(() {
       _results = res;
       _results_filtred = res;
@@ -73,11 +92,12 @@ class _SearchFunctionaryScreenState extends State<SearchFunctionaryScreen> {
         leading: IconButton(icon: const Icon(Icons.delete),
         onPressed: () async {
           Funcionario funcionario = _results_filtred[index];
-          funcionarioRepository.delete(funcionario);
-          // List<Funcionario> res = await funcionarioRepository.findAll();
-          // setState(() {
-          //   _results = res;
-          // });
+          // funcionarioRepository.delete(funcionario);
+          final response = await funcionarioController.listarFuncionarios();
+          List<Funcionario> res = response.dados ?? [];
+          setState(() {
+            _results = res;
+          });
           await _buscarTodos();
         },
        ),
@@ -95,14 +115,18 @@ class _SearchFunctionaryScreenState extends State<SearchFunctionaryScreen> {
     );
   }
 
-  Future<void> _buscarTodos() async {
-        //Atualiza a lista de pesquisa novamente
-    List<Funcionario> res = await funcionarioRepository.findAll();
-    setState(() {
-        _results = res;
-        _results_filtred = res;
-    });
-  }
+  // Future<void> _buscarTodos() async {
+  //       //Atualiza a lista de pesquisa novamente
+
+  //   final response = await funcionarioController.listarFuncionarios();
+
+  //   List<Funcionario> res = response.dados ?? [];
+  //   setState(() {
+  //       _results = res;
+  //       _results_filtred = res;
+  //   });
+
+  // }
 
  void _filtrar(String value){
     List<Funcionario> res = [];
@@ -140,5 +164,9 @@ class _SearchFunctionaryScreenState extends State<SearchFunctionaryScreen> {
 //   }
 
   
+}
+
+extension on List<ResponseModel<Funcionario>> {
+  get dados => null;
 }
 

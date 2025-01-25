@@ -1,11 +1,15 @@
 
 
 import 'package:flow_rh/data/database_provider.dart';
+import 'package:flow_rh/domain/controllers/funcionario_controller.dart';
 import 'package:flow_rh/domain/models/funcionarios.dart';
+import 'package:flow_rh/domain/models/response_model.dart';
 import 'package:flow_rh/domain/repositories/funcionario_repository.dart';
 
 
 import 'package:flutter/material.dart';
+
+import '../../domain/http/http_client.dart';
 
 class FormFunctionaryScreen extends StatefulWidget {
   static const String routName = "form.functionary";
@@ -20,24 +24,18 @@ class _FormFunctionaryScreenState extends State<FormFunctionaryScreen> {
       // ignore: unused_field
       List<Funcionario> _results = [];
 
+      final FuncionarioController funcionarioController =
+      FuncionarioController(FuncionarioRepository(client: HttpClient()));
+
   DatabaseProvider databaseProvider = DatabaseProvider();
   late FuncionarioRepository funcionarioRepository;
   
   @override
   void initState(){
     super.initState();
-    initDatabase();
   }
 
-  void initDatabase() async {
-    await databaseProvider.open();
-    funcionarioRepository = FuncionarioRepository(databaseProvider);
-    _results = await funcionarioRepository.findAll();
-    List<Funcionario> res = await funcionarioRepository.findAll();
-    setState(() {
-      _results = res;
-    });
-  }
+
 
 
 
@@ -244,11 +242,11 @@ class _FormFunctionaryScreenState extends State<FormFunctionaryScreen> {
 
     if (_funcionario.idFuncionarios == null)
     {
-      await funcionarioRepository.insert(_funcionario);
+      //await funcionarioRepository.insert(_funcionario);
     }
     else
     {
-      await funcionarioRepository.update(_funcionario);
+      //await funcionarioRepository.update(_funcionario);
     }
     
     ScaffoldMessenger.of(context).showSnackBar(
@@ -258,10 +256,14 @@ class _FormFunctionaryScreenState extends State<FormFunctionaryScreen> {
       ),
     );
 
-    List<Funcionario> res = await funcionarioRepository.findAll();
-                           setState(() {
-                             _results = res;
-                           });
+    
+    final response = await funcionarioController.listarFuncionarios();
+
+    List<Funcionario> res = response.dados ?? [];
+    
+    setState(() {
+      _results = res;
+    });
     
 
     // Limpar os campos após salvar
@@ -279,4 +281,8 @@ class _FormFunctionaryScreenState extends State<FormFunctionaryScreen> {
     _cidadeController.clear();      
     _emailController.clear();       
   }
+}
+
+extension on List<ResponseModel<Funcionario>> {
+  get dados => null;
 }
