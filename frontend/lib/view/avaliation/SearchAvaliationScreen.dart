@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:flow_rh/data/database_provider.dart';
+import 'package:flow_rh/domain/controllers/avaliacao_controller.dart';
 import 'package:flow_rh/domain/models/avaliacoes_funcionarios.dart';
 import 'package:flow_rh/domain/repositories/avaliacoes_repository.dart';
 import 'package:flow_rh/view/avaliation/FormAvaliationScreen.dart';
 import 'package:flow_rh/view/widgets/search_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flow_rh/domain/http/http_client.dart';
 
 class SearchAvaliationScreen extends StatefulWidget{
 
@@ -17,11 +21,13 @@ class SearchAvaliationScreen extends StatefulWidget{
   
 class _SearchAvaliationScreenState extends State<SearchAvaliationScreen> {
 
+  final AvaliacaoController avaliacaoController =
+      AvaliacaoController(AvaliacaoRepository(client: HttpClient()));
+
   List<Avaliacao> _results = [];
   List<Avaliacao> _results_filtred = [];
 
-  DatabaseProvider databaseProvider = DatabaseProvider();
-  late AvaliacoesRepository avaliacoesRepository;
+
   
   @override
   void initState(){
@@ -30,9 +36,17 @@ class _SearchAvaliationScreenState extends State<SearchAvaliationScreen> {
   }
 
   void initDatabase() async {
-    await databaseProvider.open();
-    avaliacoesRepository = AvaliacoesRepository(databaseProvider);
-    List<Avaliacao> res = await avaliacoesRepository.findAll();
+    // await databaseProvider.open();
+    // avaliacoesRepository = AvaliacoesRepository(databaseProvider);
+    // List<Avaliacao> res = await avaliacoesRepository.findAll();
+    // setState(() {
+    //   _results = res;
+    //   _results_filtred = res;
+    // });
+
+    final response = await avaliacaoController.listarAvaliacoes();
+    List<Avaliacao> res = response[0].dados ?? [];
+    print(res);
     setState(() {
       _results = res;
       _results_filtred = res;
@@ -62,11 +76,17 @@ class _SearchAvaliationScreenState extends State<SearchAvaliationScreen> {
         leading: IconButton(icon: const Icon(Icons.delete),
         onPressed: () async {
           Avaliacao avaliacao = _results_filtred[index];
-          avaliacoesRepository.delete(avaliacao);
-          // List<Avaliacao> res = await avaliacoesRepository.findAll();
-          // setState(() {
-          //   _results = res;
-          // });
+          print(avaliacao);
+
+         final response =
+                await avaliacaoController.deletarAvaliacao(avaliacao.id!);
+
+    List<Avaliacao> res = response[0].dados ?? [];
+    print(res);
+    setState(() {
+      _results = res;
+      _results_filtred = res;
+    });
           await _buscarTodos();
         },
        ),
@@ -74,10 +94,13 @@ class _SearchAvaliationScreenState extends State<SearchAvaliationScreen> {
         Avaliacao avaliacao = _results_filtred[index];
         print(avaliacao);
         await Navigator.of(context).pushNamed(FormAvaliationScreen.routName, arguments: avaliacao);
-        // List<Avaliacao> res = await avaliacoesRepository.findAll();
-        // setState(() {
-        //   _results = res;
-        // });
+        final response = await avaliacaoController.listarAvaliacoes();
+    List<Avaliacao> res = response[0].dados ?? [];
+    print(res);
+    setState(() {
+      _results = res;
+      _results_filtred = res;
+    });
         await _buscarTodos();
        },
       ),
@@ -85,11 +108,12 @@ class _SearchAvaliationScreenState extends State<SearchAvaliationScreen> {
   }
 
   Future<void> _buscarTodos() async {
-        //Atualiza a lista de pesquisa novamente
-    List<Avaliacao> res = await avaliacoesRepository.findAll();
+     final response = await avaliacaoController.listarAvaliacoes();
+    List<Avaliacao> res = response[0].dados ?? [];
+    print(res);
     setState(() {
-        _results = res;
-        _results_filtred = res;
+      _results = res;
+      _results_filtred = res;
     });
   }
 

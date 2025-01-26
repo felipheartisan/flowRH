@@ -1,6 +1,6 @@
 import 'package:flow_rh/data/database_provider.dart';
 import 'package:flow_rh/domain/controllers/funcionario_controller.dart';
-import 'package:flow_rh/domain/dto/funcionario/funcionario_criacao_dto.dart';
+import 'package:flow_rh/domain/dto/funcionario_criacao_dto.dart';
 import 'package:flow_rh/domain/models/funcionarios.dart';
 import 'package:flow_rh/domain/models/response_model.dart';
 import 'package:flow_rh/domain/repositories/funcionario_repository.dart';

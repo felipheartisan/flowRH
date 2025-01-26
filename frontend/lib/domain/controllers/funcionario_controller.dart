@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flow_rh/domain/dto/funcionario/funcionario_criacao_dto.dart';
+import 'package:flow_rh/domain/dto/funcionario_criacao_dto.dart';
 import 'package:flow_rh/domain/models/funcionarios.dart';
 import 'package:flow_rh/domain/models/response_model.dart';
 import 'package:flow_rh/domain/models/usuario_model.dart';

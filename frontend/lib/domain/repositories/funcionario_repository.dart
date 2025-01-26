@@ -1,18 +1,10 @@
 import 'dart:convert';
 
-import 'package:flow_rh/data/database_provider.dart';
-import 'package:flow_rh/domain/dto/funcionario/funcionario_criacao_dto.dart';
+import 'package:flow_rh/domain/dto/funcionario_criacao_dto.dart';
 import 'package:flow_rh/domain/http/http_client.dart';
 import 'package:flow_rh/domain/models/funcionarios.dart';
 import 'package:flow_rh/domain/models/response_model.dart';
-import 'package:flow_rh/domain/models/response_model.dart';
-import 'package:flow_rh/domain/models/response_model.dart';
-import 'package:flow_rh/domain/models/usuario_model.dart';
-import 'package:flow_rh/domain/models/response_model.dart';
-import 'package:flow_rh/domain/viewmodel/login_viewmodel.dart';
-import 'package:sqflite/sqflite.dart';
 
-import '../models/response_model.dart';
 
 abstract class IFuncionarioRepository {
   Future<List<ResponseModel<Funcionario>>> listarFuncionarios();

@@ -1,12 +1,8 @@
-import 'package:flow_rh/data/database_provider.dart';
+
 import 'package:flow_rh/domain/controllers/funcionario_controller.dart';
 import 'package:flow_rh/domain/http/http_client.dart';
-import 'package:flow_rh/domain/models/avaliacoes_funcionarios.dart';
-import 'package:flow_rh/domain/models/beneficios_funcionarios.dart';
 import 'package:flow_rh/domain/models/funcionarios.dart';
 import 'package:flow_rh/domain/models/response_model.dart';
-import 'package:flow_rh/domain/repositories/avaliacoes_repository.dart';
-import 'package:flow_rh/domain/repositories/beneficios_funcionarios_repository.dart';
 import 'package:flow_rh/domain/repositories/funcionario_repository.dart';
 import 'package:flow_rh/view/functionary/FormFunctionaryScreen.dart';
 import 'package:flow_rh/view/widgets/search_widget.dart';
@@ -28,13 +24,10 @@ class _SearchFunctionaryScreenState extends State<SearchFunctionaryScreen> {
   List<Funcionario> _results = [];
   List<Funcionario> _results_filtred = [];
 
-  List<Avaliacao> all_avaliacoes = [];
-  List<BeneficiosFuncionarios> all_funcBene = [];
 
-  DatabaseProvider databaseProvider = DatabaseProvider();
-  late FuncionarioRepository funcionarioRepository;
-  late AvaliacoesRepository avaliacoesRepository;
-  late BeneficiosFuncionariosRepository funcbeneRepository;
+
+
+
 
   @override
   void initState() {

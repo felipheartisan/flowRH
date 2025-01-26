@@ -1,97 +1,94 @@
-import 'package:flow_rh/data/database_provider.dart';
+import 'dart:convert';
+
+import 'package:flow_rh/domain/dto/avaliacao_criacao_dto.dart';
+import 'package:flow_rh/domain/dto/funcionario_criacao_dto.dart';
+import 'package:flow_rh/domain/http/http_client.dart';
 import 'package:flow_rh/domain/models/avaliacoes_funcionarios.dart';
 import 'package:flow_rh/domain/models/funcionarios.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:flow_rh/domain/models/response_model.dart';
 
-class AvaliacoesRepository{
-  late DatabaseProvider databaseProvider;
+
+abstract class IAvaliacaoRepository {
+  Future<List<ResponseModel<Avaliacao>>> listarAvaliacoes();
+  Future<List<ResponseModel<Avaliacao>>> criarAvaliacao(
+      AvaliacaoCriacaoDto avaliacaoCriacaoDto);
+
+  Future<List<ResponseModel<Avaliacao>>> deletarAvaliacao(
+  int idAvaliacao);
+
+  // Future<List<ResponseModel<Funcionario>>> atualizarFuncionario(
+  //     Funcionario funcionarioEdicaoDto);
+}
+
+class AvaliacaoRepository extends IAvaliacaoRepository {
+  final IHttpClient client;
+
+  AvaliacaoRepository({required this.client});
+
+  @override
+  Future<List<ResponseModel<Avaliacao>>> listarAvaliacoes() async {
+    var responseJson = await client.get(
+        url: 'http://localhost:5003/api/Avaliacao/Listaravaliacaos');
+
+    if (responseJson != null) {
+      final responseMap = jsonDecode(responseJson.body) as Map<String, dynamic>;
+
+      var result = ResponseModel<Avaliacao>.fromMap(
+        responseMap,
+        (map) => Avaliacao.fromMap(map),
+      );
+
+      return [result];
+    } else {
+      throw Exception('Failed to load users');
+    }
+  }
   
-  AvaliacoesRepository(this.databaseProvider);
+  @override
+  Future<List<ResponseModel<Avaliacao>>> deletarAvaliacao(int idAvaliacao) async {
+     final responseJson = await client.delete(
+        url: "http://localhost:5003/api/Avaliacao/Deletaravaliacao",
+        id: idAvaliacao);
 
-   Future<int> insert(Avaliacao entity) async {
-    try{
-      print("salvou 000");
-       await databaseProvider.open();
-      Database dt = databaseProvider.database;
-      return await dt.insert("Avaliacoes", entity.toMap());
-    } on Exception catch (e){
-      throw Exception(e);
-    }finally{
-      if (databaseProvider.database.isOpen){
-        databaseProvider.database.close();
-      }
+    if (responseJson != null) {
+      final responseMap = jsonDecode(responseJson.body) as Map<String, dynamic>;
+
+      var result = ResponseModel<Avaliacao>.fromMap(
+        responseMap,
+        (map) => Avaliacao.fromMap(map),
+      );
+
+      return [result];
+    } else {
+      throw Exception('Falha ao deletar o usuário');
+    }
+  }
+  
+  @override
+  Future<List<ResponseModel<Avaliacao>>> criarAvaliacao(AvaliacaoCriacaoDto avaliacaoCriacaoDto) async {
+    final jsonBody = jsonEncode(avaliacaoCriacaoDto.toMap());
+
+    print(jsonBody);
+
+    final responseJson = await client.post(
+        url: 'http://localhost:5003/api/Avaliacao/Criaravaliacao',
+        body: jsonBody);
+
+    print(responseJson);
+
+    if (responseJson != null) {
+      final responseMap = jsonDecode(responseJson.body) as Map<String, dynamic>;
+
+      var result = ResponseModel<Avaliacao>.fromMap(
+        responseMap,
+        (map) => Avaliacao.fromMap(map),
+      );
+
+      return [result];
+    } else {
+      throw Exception('Falha ao salvar o usuário');
     }
   }
 
-  Future<int>  delete(Avaliacao entity) async{
-    await databaseProvider.open();
-    Database dt = databaseProvider.database;
-    return await dt.delete("Avaliacoes", 
-                  where : "idAvaliacoes = ?", 
-                  whereArgs:  ["${entity.idAvaliacoes}"]);
-  }
-
-  Future<int>  deletebyfunc(Funcionario entity) async{
-    await databaseProvider.open();
-    Database dt = databaseProvider.database;
-    return await dt.delete("Avaliacoes", 
-                  where : "idFuncionarios = ?", 
-                  whereArgs:  ["${entity.id}"]);
-  }
-
-
-  Future<int>  update(Avaliacao entity) async{
-    await databaseProvider.open();
-    Database dt = databaseProvider.database;
-    return await dt.update("Avaliacoes",
-                    entity.toMap(), 
-                    where : "idAvaliacoes = ?", 
-                  whereArgs:  [entity.idAvaliacoes]);
-  }
-
-  Future<Avaliacao> findById(int idAvaliacoes) async{
-    await databaseProvider.open();
-    Database dt = databaseProvider.database;
-    List<Map<String, Object?>> result = await dt.rawQuery("SELECT * FROM Avaliacoes WHERE idAvaliacoes = $idAvaliacoes");
-    //Se retornou resultados
-    var avaliacao = Avaliacao();
-    if (result.isNotEmpty){
-        Map<String, Object?> item = result[0];
-        avaliacao.idAvaliacoes = item["idAvaliacoes"] as int;
-        avaliacao.nota = item["nota"] as String;
-        
-    }
-    return avaliacao;
-  }
  
-
-   /// Busca todos os registro do banco de dados convertido para
-  /// um objeto do tipo List<Estado>.   
-  Future<List<Avaliacao>> findAll() async{
-    await databaseProvider.open();
-    Database dt = databaseProvider.database;
-    List<Map<String, Object?>> result = await dt.rawQuery('''
-SELECT a.*,
-      f.nome AS NomeFuncionario
-FROM Avaliacoes as a
-JOIN Funcionarios as f 
-    ON a.idFuncionarios = f.idFuncionarios;
-
-''');
-        
-    List<Avaliacao> avaliacaoResults = [];
-    
-    //Se retornou resultados
-    if (result.isNotEmpty){
-        for (int i = 0; i < result.length; i++){            
-            Map<String, Object?> item = result[i];
-            //Convertendo um Map para o objeto apropriado
-            Avaliacao avaliacao = Avaliacao.fromMap(item);
-            avaliacaoResults.add(avaliacao);
-        }
-    }
-     
-    return avaliacaoResults;
-  }  
-
 }
