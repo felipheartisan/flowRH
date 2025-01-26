@@ -3,9 +3,9 @@
 import 'dart:convert';
 
 class Funcionario {
-  int? idFuncionarios;
+  int? id;
   String? nome;
-  String? data_nascimento;
+  String? dataNascimento;
   String? salario;
   String? cargo;
   String? departamento;
@@ -13,15 +13,15 @@ class Funcionario {
   String? rg;
   String? telefone;
   String? rua;
-  String? numero_casa;
+  String? numeroCasa;
   String? bairro;
   String? cidade;
   String? email;
 
   Funcionario({
-    this.idFuncionarios,
+    this.id,
     this.nome,
-    this.data_nascimento,
+    this.dataNascimento,
     this.salario,
     this.cargo,
     this.departamento,
@@ -29,16 +29,16 @@ class Funcionario {
     this.rg,
     this.telefone,
     this.rua,
-    this.numero_casa,
+    this.numeroCasa,
     this.bairro,
     this.cidade,
     this.email,
   });
 
   Funcionario copyWith({
-    int? idFuncionarios,
+    int? id,
     String? nome,
-    String? data_nascimento,
+    String? dataNascimento,
     String? salario,
     String? cargo,
     String? departamento,
@@ -46,15 +46,15 @@ class Funcionario {
     String? rg,
     String? telefone,
     String? rua,
-    String? numero_casa,
+    String? numeroCasa,
     String? bairro,
     String? cidade,
     String? email,
   }){
     return Funcionario(
-      idFuncionarios: idFuncionarios?? this.idFuncionarios,
+      id: id?? this.id,
       nome: nome?? this.nome,
-      data_nascimento: data_nascimento?? this.data_nascimento,
+      dataNascimento: dataNascimento?? this.dataNascimento,
       salario: salario?? this.salario,
       cargo: cargo?? this.cargo,
       departamento: departamento?? this.departamento,
@@ -62,7 +62,7 @@ class Funcionario {
       rg: rg?? this.rg,
       telefone: telefone?? this.telefone,
       rua: rua?? this.rua,
-      numero_casa: numero_casa?? this.numero_casa,
+      numeroCasa: numeroCasa?? this.numeroCasa,
       bairro: bairro?? this.bairro,
       cidade: cidade?? this.cidade,
       email: email?? this.email,
@@ -71,9 +71,9 @@ class Funcionario {
 
   Map<String, dynamic> toMap(){
     return <String, dynamic>{
-      'idFuncionarios': idFuncionarios,
+      'id': id,
       'nome': nome,
-      'data_nascimento': data_nascimento,
+      'dataNascimento': dataNascimento,
      'salario': salario,
       'cargo': cargo,
       'departamento': departamento,
@@ -81,7 +81,7 @@ class Funcionario {
       'rg': rg,
       'telefone': telefone,
       'rua': rua,
-      'numero_casa': numero_casa,
+      'numeroCasa': numeroCasa,
       'bairro': bairro,
       'cidade': cidade,
       'email': email,
@@ -90,9 +90,9 @@ class Funcionario {
 
   factory Funcionario.fromMap(Map<String, dynamic> map){
     return Funcionario(
-      idFuncionarios: map['idFuncionarios'] != null ? map['idFuncionarios'] as int : null,
+      id: map['id'] != null ? map['id'] as int : null,
       nome: map['nome'] != null ? map['nome'] as String : null ,
-      data_nascimento: map['data_nascimento'] != null ? map['data_nascimento'] as String : null,
+      dataNascimento: map['dataNascimento'] != null ? map['dataNascimento'] as String : null,
       salario: map['salario'] != null ? map['salario'] as String : null,
       cargo: map['cargo'] != null ? map['cargo'] as String : null,
       departamento: map['departamento'] != null ? map['departamento'] as String : null,
@@ -100,7 +100,7 @@ class Funcionario {
       rg: map['rg'] != null ? map['rg'] as String : null,
       telefone: map['telefone'] != null ? map['telefone'] as String : null,
       rua: map['rua'] != null ? map['rua'] as String : null,
-      numero_casa: map['numero_casa'] != null ? map['numero_casa'] as String : null,
+      numeroCasa: map['numeroCasa'] != null ? map['numeroCasa'] as String : null,
       bairro: map['bairro'] != null ? map['bairro'] as String : null,
       cidade: map['cidade'] != null ? map['cidade'] as String : null,
       email: map['email'] != null ? map['email'] as String : null,
@@ -113,15 +113,15 @@ class Funcionario {
 
   @override
   String toString() {
-    return 'Funcionario{idFuncionarios: $idFuncionarios, nome: $nome, data_nascimento: $data_nascimento, salario: $salario, cargo: $cargo, departamento: $departamento, cpf: $cpf, rg: $rg, telefone: $telefone, rua: $rua, numero_casa: $numero_casa, bairro: $bairro, cidade: $cidade, email: $email';
+    return 'Funcionario{id: $id, nome: $nome, dataNascimento: $dataNascimento, salario: $salario, cargo: $cargo, departamento: $departamento, cpf: $cpf, rg: $rg, telefone: $telefone, rua: $rua, numeroCasa: $numeroCasa, bairro: $bairro, cidade: $cidade, email: $email';
   }
 
   @override
   bool operator == (covariant Funcionario other) {
     if (identical(this, other)) return true;
-    return idFuncionarios == other.idFuncionarios &&
+    return id == other.id &&
         nome == other.nome &&
-        data_nascimento == other.data_nascimento &&
+        dataNascimento == other.dataNascimento &&
         salario == other.salario &&
         cargo == other.cargo &&
         departamento == other.departamento &&
@@ -129,7 +129,7 @@ class Funcionario {
         rg == other.rg &&
         telefone == other.telefone &&
         rua == other.rua &&
-        numero_casa == other.numero_casa &&
+        numeroCasa == other.numeroCasa &&
         bairro == other.bairro &&
         cidade == other.cidade &&
         email == other.email;
@@ -137,9 +137,9 @@ class Funcionario {
 
   @override
   int get hashCode {
-    return idFuncionarios.hashCode ^
+    return id.hashCode ^
         nome.hashCode ^
-        data_nascimento.hashCode ^
+        dataNascimento.hashCode ^
         salario.hashCode ^
         cargo.hashCode ^
         departamento.hashCode ^
@@ -147,9 +147,10 @@ class Funcionario {
         rg.hashCode ^
         telefone.hashCode ^
         rua.hashCode ^
-        numero_casa.hashCode ^
+        numeroCasa.hashCode ^
         bairro.hashCode ^
         cidade.hashCode ^
         email.hashCode;
   }
+
 }

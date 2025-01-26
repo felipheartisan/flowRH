@@ -36,7 +36,7 @@ class BeneficiosFuncionariosRepository{
     Database dt = databaseProvider.database;
     return await dt.delete("Beneficios_has_Funcionarios", 
                   where : "idFuncionarios = ?", 
-                  whereArgs:  ["${entity.idFuncionarios}"]);
+                  whereArgs:  ["${entity.id}"]);
   }
 
   Future<int>  deletebyBene(Beneficio entity) async{

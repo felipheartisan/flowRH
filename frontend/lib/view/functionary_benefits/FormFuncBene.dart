@@ -187,7 +187,7 @@ void _salvar() async {
         _beneficioController.text = _selectedBeneficio!.descricao!;
 
          _beneficio_funcionario.idBeneficios = _selectedBeneficio?.idBeneficios;
-         _beneficio_funcionario.idFuncionarios = _selectedFuncionario?.idFuncionarios;
+         _beneficio_funcionario.idFuncionarios = _selectedFuncionario?.id;
 
          _beneficio_funcionario.nome_funcionario = _funcionarioController.text;
          _beneficio_funcionario.descricao_beneficio = _beneficioController.text; 

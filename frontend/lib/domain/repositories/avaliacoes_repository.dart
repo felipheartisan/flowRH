@@ -36,7 +36,7 @@ class AvaliacoesRepository{
     Database dt = databaseProvider.database;
     return await dt.delete("Avaliacoes", 
                   where : "idFuncionarios = ?", 
-                  whereArgs:  ["${entity.idFuncionarios}"]);
+                  whereArgs:  ["${entity.id}"]);
   }
 
 

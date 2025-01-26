@@ -83,7 +83,7 @@ class _FormAvaliationScreenState extends State<FormAvaliationScreen> {
       _atividadesController.text = _avaliacao.atividades!;
       _mesController.text = _avaliacao.mesReferencia!;
       _anoController.text = _avaliacao.anoReferencia!;
-      _selectedFuncionario?.idFuncionarios = _avaliacao.IdFuncionarios!;
+      _selectedFuncionario?.id = _avaliacao.IdFuncionarios!;
       _selectedFuncionario?.nome = _avaliacao.NomeFuncionario;      
     }
       
@@ -179,7 +179,7 @@ class _FormAvaliationScreenState extends State<FormAvaliationScreen> {
     if ( _selectedFuncionario != null) {
       
         
-        _avaliacao.IdFuncionarios = _selectedFuncionario?.idFuncionarios;
+        _avaliacao.IdFuncionarios = _selectedFuncionario?.id;
         _avaliacao.anoReferencia = _anoController.text;
         _avaliacao.mesReferencia = _mesController.text;
         _avaliacao.nota = _notaController.text;
