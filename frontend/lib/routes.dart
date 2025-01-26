@@ -3,8 +3,8 @@ import 'package:flow_rh/view/avaliation/FormAvaliationScreen.dart';
 import 'package:flow_rh/view/avaliation/SearchAvaliationScreen.dart';
 import 'package:flow_rh/view/benefits/FormBenefitsScreen.dart';
 import 'package:flow_rh/view/benefits/SearchBenefitsScreen.dart';
-import 'package:flow_rh/view/cashflow/SearchCashScreen.dart';
-import 'package:flow_rh/view/cashflow/FormCashScreen.dart';
+import 'package:flow_rh/view/cashflow/SearchLancamentoScreen.dart';
+import 'package:flow_rh/view/cashflow/FormLancamentoScreen.dart';
 import 'package:flow_rh/view/functionary/FormFunctionaryScreen.dart';
 import 'package:flow_rh/view/functionary_benefits/FormFuncBene.dart';
 import 'package:flow_rh/view/functionary_benefits/SearchFuncBene.dart';
@@ -19,8 +19,8 @@ class Routes{
     HomeScreen.routName : (context) => HomeScreen(),
     FormFunctionaryScreen.routName : (context) => FormFunctionaryScreen(),
     SearchFunctionaryScreen.routName : (context) => const SearchFunctionaryScreen(),
-    FormCashScreen.routName : (context) => FormCashScreen(),
-    SearchCashScreen.routName : (context) => const SearchCashScreen(),
+    FormLancamentoScreen.routName : (context) => FormLancamentoScreen(),
+    SearchLancamentoScreen.routName : (context) => const SearchLancamentoScreen(),
     LoginScreen.routName : (context) => LoginScreen(),
     FormBenefitsScreen.routName : (context) => FormBenefitsScreen(),
     SearchBenefitsScreen.routName : (context) => const SearchBenefitsScreen(),

@@ -1,7 +1,8 @@
 import 'package:flow_rh/view/avaliation/FormAvaliationScreen.dart';
 import 'package:flow_rh/view/avaliation/SearchAvaliationScreen.dart';
 import 'package:flow_rh/view/benefits/SearchBenefitsScreen.dart';
-import 'package:flow_rh/view/cashflow/SearchCashScreen.dart';
+
+import 'package:flow_rh/view/cashflow/SearchLancamentoScreen.dart';
 import 'package:flow_rh/view/functionary/SearchFunctionaryScreen.dart';
 import 'package:flow_rh/view/functionary_benefits/SearchFuncBene.dart';
 import 'package:flow_rh/view/login_screen.dart';
@@ -70,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.pop(context);
                 Navigator.pushNamed(
                      context,
-                     SearchCashScreen.routName
+                     SearchLancamentoScreen.routName
                     
                 );
               },
@@ -93,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.pop(context);
                  Navigator.pushNamed(
                      context,
-                     SearchCashScreen.routName
+                     SearchLancamentoScreen.routName
                     
                 );
               },
@@ -160,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
             _buildButton(context, 'Fluxo de caixa', Icons.payment, () {
               Navigator.pushNamed(
                      context,
-                     SearchCashScreen.routName
+                     SearchLancamentoScreen.routName
                     
                 );
             }),

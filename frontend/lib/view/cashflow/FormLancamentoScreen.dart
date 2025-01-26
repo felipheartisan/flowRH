@@ -1,23 +1,25 @@
 import 'package:flow_rh/data/database_provider.dart';
-import 'package:flow_rh/domain/models/cash.dart';
-import 'package:flow_rh/domain/repositories/cash_repository.dart';
+import 'package:flow_rh/domain/controllers/lancamento_controller.dart';
+import 'package:flow_rh/domain/http/http_client.dart';
+import 'package:flow_rh/domain/models/lancamento_model.dart';
+import 'package:flow_rh/domain/repositories/lancamento_repository.dart';
 import 'package:flutter/material.dart';
 
-class FormCashScreen extends StatefulWidget {
-  static const String routName = "form.cash";
+class FormLancamentoScreen extends StatefulWidget {
+  static const String routName = "form.Lancamento";
 
-  const FormCashScreen({super.key}); 
+  const FormLancamentoScreen({super.key}); 
 
   @override
-  _FormCashScreenState createState() => _FormCashScreenState();
+  _FormLancamentoScreenState createState() => _FormLancamentoScreenState();
 }
 
-class _FormCashScreenState extends State<FormCashScreen> {  
+class _FormLancamentoScreenState extends State<FormLancamentoScreen> {  
     // ignore: unused_field
-    List<Cash> _results = [];
+    List<Lancamento> _results = [];
 
-  DatabaseProvider databaseProvider = DatabaseProvider();
-  late CashRepository cashRepository;
+  final LancamentoController lancamentoController =
+      LancamentoController(LancamentoRepository(client: HttpClient()));
   
   @override
   void initState(){
@@ -26,10 +28,9 @@ class _FormCashScreenState extends State<FormCashScreen> {
   }
 
   void initDatabase() async {
-    await databaseProvider.open();
-    cashRepository = CashRepository(databaseProvider);
-    _results = await cashRepository.findAll();
-    List<Cash> res = await cashRepository.findAll();
+    final response = await lancamentoController.listarLancamentos();
+    List<Lancamento> res = response[0].dados ?? [];
+    print(res);
     setState(() {
       _results = res;
     });
@@ -45,16 +46,16 @@ class _FormCashScreenState extends State<FormCashScreen> {
 
   final List<String> _categories = ['Entrada', 'Saída'];
 
-  Cash _cash = Cash();
+  Lancamento _Lancamento = Lancamento();
 
   @override
   Widget build(BuildContext context) {
     if (ModalRoute.of(context) != null && ModalRoute.of(context)!.settings.arguments != null) {
-      _cash = ModalRoute.of(context)!.settings.arguments as Cash;
-      _valueController.text = _cash.valor!;
-      _descController.text = _cash.descricao!;
-      _dataController.text = _cash.data!;
-      _catController.text= _cash.categoria!;
+      _Lancamento = ModalRoute.of(context)!.settings.arguments as Lancamento;
+      _valueController.text = _Lancamento.valor!;
+      _descController.text = _Lancamento.descricao!;
+      _dataController.text = _Lancamento.data!;
+      _catController.text= _Lancamento.tipo!;
     }
 
     return Scaffold(
@@ -143,36 +144,21 @@ class _FormCashScreenState extends State<FormCashScreen> {
 
   void _salvar() async {
 
-    _cash.valor = _valueController.text;
-    _cash.data = _dataController.text;
-    _cash.categoria = _catController.text;
-    _cash.descricao = _descController.text;
+    _Lancamento.valor = _valueController.text;
+    _Lancamento.data = _dataController.text;
+    _Lancamento.tipo = _catController.text;
+    _Lancamento.descricao = _descController.text;
 
-    if (_cash.idCash == null)
+    if (_Lancamento.id == null)
     {
-      await cashRepository.insert(_cash);
-      ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-            'Fluxo de caixa salvo'),
-      ),
       
-    );
     }
     else
     {
-      await cashRepository.update(_cash);
-      ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-            'Fluxo de caixa atualizado'),
-      ),
-    );
+     
+    
     }
-    List<Cash> res = await cashRepository.findAll();
-                           setState(() {
-                             _results = res;
-                           });
+
     
 
 }
