@@ -14,39 +14,30 @@ import 'package:sqflite/sqflite.dart';
 import '../models/response_model.dart';
 
 abstract class IFuncionarioRepository {
-
   Future<List<ResponseModel<Funcionario>>> listarFuncionarios();
-  
 }
 
 class FuncionarioRepository extends IFuncionarioRepository {
   final IHttpClient client;
 
   FuncionarioRepository({required this.client});
-  
+
   @override
   Future<List<ResponseModel<Funcionario>>> listarFuncionarios() async {
-    
     var responseJson = await client.get(
         url: 'http://localhost:5003/api/Funcionario/ListarFuncionarios');
 
     if (responseJson != null) {
-      final responseMap = jsonDecode(responseJson.body);
+      final responseMap = jsonDecode(responseJson.body) as Map<String, dynamic>;
 
-      return responseMap.map<ResponseModel<Funcionario>>((item) {
-        return ResponseModel<Funcionario>(
-          dados: [Funcionario.fromMap(item)],
-          status: item['status'] as bool,
-          mensagem: item['mensagem'] as String,
-        );
-      }).toList();
+      var result = ResponseModel<Funcionario>.fromMap(
+        responseMap,
+        (map) => Funcionario.fromMap(map),
+      );
+
+      return [result];
     } else {
       throw Exception('Failed to load users');
     }
-
-
-
   }
-
- 
 }

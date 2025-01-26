@@ -31,30 +31,37 @@ class ResponseModel<T> {
     };
   }
 
-factory ResponseModel.fromMap(
-  Map<String, dynamic> map,
-  T Function(Map<String, dynamic>) fromMapCallback,
-) {
-  // Verifique o tipo de "dados"
-  final dados = map['dados'];
+  factory ResponseModel.fromMap(
+    Map<String, dynamic> map,
+    T Function(Map<String, dynamic>) fromMapCallback,
+  ) {
+    // Verifique o tipo de "dados"
+    final dados = map['dados'];
 
-  return ResponseModel<T>(
-    dados: dados != null
-        ? (dados is List
+    return ResponseModel<T>(
+      dados: dados != null
+          ? (dados is List
             ? List<T>.from(
-                dados.map((x) => fromMapCallback(x as Map<String, dynamic>)),
+                dados.map((x) {
+                  if (x is Map<String, dynamic>) {
+                    return fromMapCallback(x);
+                  } else {
+                    throw Exception(
+                        'Elemento em "dados" não é um Map<String, dynamic>: $x');
+                  }
+                }),
               )
-            : [fromMapCallback(dados as Map<String, dynamic>)]) // Trata o caso em que "dados" é um mapa
+            : dados is Map
+                ? [fromMapCallback(dados as Map<String, dynamic>)]
+                : throw Exception(
+                    '"dados" precisa ser uma Lista ou um Mapa. Tipo encontrado: ${dados.runtimeType}'))
         : null,
-    status: map['status'] != null
-        ? (map['status'] is int ? map['status'] == 1 : map['status'] as bool)
-        : null,
-    mensagem: map['mensagem'] != null ? map['mensagem'] as String : null,
-  );
-}
-
-
-
+      status: map['status'] != null
+          ? (map['status'] is int ? map['status'] == 1 : map['status'] as bool)
+          : null,
+      mensagem: map['mensagem'] != null ? map['mensagem'] as String : null,
+    );
+  }
 
   String toJson(Function(T) toMapCallback) => json.encode(toMap(toMapCallback));
 
@@ -62,19 +69,20 @@ factory ResponseModel.fromMap(
     String source,
     T Function(Map<String, dynamic>) fromMapCallback,
   ) =>
-      ResponseModel.fromMap(json.decode(source) as Map<String, dynamic>, fromMapCallback);
+      ResponseModel.fromMap(
+          json.decode(source) as Map<String, dynamic>, fromMapCallback);
 
   @override
-  String toString() => 'ResponseModel(dados: $dados, status: $status, mensagem: $mensagem)';
+  String toString() =>
+      'ResponseModel(dados: $dados, status: $status, mensagem: $mensagem)';
 
   @override
   bool operator ==(covariant ResponseModel<T> other) {
     if (identical(this, other)) return true;
 
-    return 
-      _listEquals(other.dados, dados) &&
-      other.status == status &&
-      other.mensagem == mensagem;
+    return _listEquals(other.dados, dados) &&
+        other.status == status &&
+        other.mensagem == mensagem;
   }
 
   @override

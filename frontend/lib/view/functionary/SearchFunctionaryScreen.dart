@@ -56,7 +56,7 @@ class _SearchFunctionaryScreenState extends State<SearchFunctionaryScreen> {
     // });
 
     final response = await funcionarioController.listarFuncionarios();
-    List<Funcionario> res = response.dados ?? [];
+    List<Funcionario> res = response[0].dados ?? [];
     setState(() {
       _results = res;
       _results_filtred = res;
@@ -65,7 +65,7 @@ class _SearchFunctionaryScreenState extends State<SearchFunctionaryScreen> {
   Future<void> _buscarTodos() async {
     //Atualiza a lista de pesquisa novamente
     final response = await funcionarioController.listarFuncionarios();
-    List<Funcionario> res = response.dados ?? [];
+    List<Funcionario> res = response[0].dados ?? [];
     setState(() {
       _results = res;
       _results_filtred = res;
@@ -94,7 +94,7 @@ class _SearchFunctionaryScreenState extends State<SearchFunctionaryScreen> {
           Funcionario funcionario = _results_filtred[index];
           // funcionarioRepository.delete(funcionario);
           final response = await funcionarioController.listarFuncionarios();
-          List<Funcionario> res = response.dados ?? [];
+          List<Funcionario> res = response[0].dados ?? [];
           setState(() {
             _results = res;
           });
@@ -115,18 +115,6 @@ class _SearchFunctionaryScreenState extends State<SearchFunctionaryScreen> {
     );
   }
 
-  // Future<void> _buscarTodos() async {
-  //       //Atualiza a lista de pesquisa novamente
-
-  //   final response = await funcionarioController.listarFuncionarios();
-
-  //   List<Funcionario> res = response.dados ?? [];
-  //   setState(() {
-  //       _results = res;
-  //       _results_filtred = res;
-  //   });
-
-  // }
 
  void _filtrar(String value){
     List<Funcionario> res = [];
