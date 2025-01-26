@@ -1,4 +1,6 @@
 import 'package:flow_rh/data/database_provider.dart';
+import 'package:flow_rh/domain/controllers/beneficio_controller.dart';
+import 'package:flow_rh/domain/http/http_client.dart';
 import 'package:flow_rh/domain/models/beneficios.dart';
 import 'package:flow_rh/domain/models/beneficios_funcionarios.dart';
 import 'package:flow_rh/domain/repositories/beneficios_funcionarios_repository.dart';
@@ -8,17 +10,18 @@ import 'package:flutter/material.dart';
 
 import 'FormBenefitsScreen.dart';
 
-class SearchBenefitsScreen extends StatefulWidget{
-
+class SearchBenefitsScreen extends StatefulWidget {
   static const String routName = "search.benefits";
 
   const SearchBenefitsScreen({super.key});
-  
+
   @override
   State<StatefulWidget> createState() => _SearchBenefitsScreenState();
 }
-  
+
 class _SearchBenefitsScreenState extends State<SearchBenefitsScreen> {
+  final BeneficioController beneficioController =
+      BeneficioController(BeneficiosRepository(client: HttpClient()));
 
   List<Beneficio> _results = [];
   List<Beneficio> _results_filtred = [];
@@ -28,22 +31,26 @@ class _SearchBenefitsScreenState extends State<SearchBenefitsScreen> {
   DatabaseProvider databaseProvider = DatabaseProvider();
   late BeneficiosRepository beneficiosRepository;
   late BeneficiosFuncionariosRepository funcbeneRepository;
-  
+
   @override
-  void initState(){
+  void initState() {
     super.initState();
     initDatabase();
   }
 
   void initDatabase() async {
-    await databaseProvider.open();
-    beneficiosRepository = BeneficiosRepository(databaseProvider);
-    funcbeneRepository = BeneficiosFuncionariosRepository(databaseProvider);
-    
-    _results = await beneficiosRepository.findAll();
-    List<Beneficio> res = await beneficiosRepository.findAll();
+    // await databaseProvider.open();
+    // beneficiosRepository = BeneficiosRepository(databaseProvider);
+    // funcbeneRepository = BeneficiosFuncionariosRepository(databaseProvider);
 
-    all_funcBene = await funcbeneRepository.findAll();
+    // _results = await beneficiosRepository.findAll();
+    // List<Beneficio> res = await beneficiosRepository.findAll();
+
+    // all_funcBene = await funcbeneRepository.findAll();
+
+    final response = await beneficioController.ListarBeneficios();
+    List<Beneficio> res = response[0].dados ?? [];
+    print(res);
     setState(() {
       _results = res;
       _results_filtred = res;
@@ -59,68 +66,80 @@ class _SearchBenefitsScreenState extends State<SearchBenefitsScreen> {
       onitemBuilder: (context, index) => _createItem(context, index),
       updateListView: () => _buscarTodos(),
       filtraResultados: (String value) => _filtrar(value),
-      );
+    );
   }
 
   Widget _createItem(BuildContext context, int index) {
-     return Card(
+    return Card(
       color: Colors.blue,
       child: ListTile(
-        
         title: Text(_results_filtred[index].descricao!),
-        leading: IconButton(icon: const Icon(Icons.delete),
-        onPressed: () async {
+        leading: IconButton(
+          icon: const Icon(Icons.delete),
+          onPressed: () async {
+            Beneficio beneficio = _results_filtred[index];
+
+            final response =
+                await beneficioController.DeletarBeneficio(beneficio.id!);
+
+            //beneficiosRepository.delete(beneficio);
+
+            List<Beneficio> res = response[0].dados ?? [];
+            print(res);
+            setState(() {
+              _results = res;
+              _results_filtred = res;
+            });
+            await _buscarTodos();
+          },
+        ),
+        onTap: () async {
           Beneficio beneficio = _results_filtred[index];
-          beneficiosRepository.delete(beneficio);
-          // List<Beneficio> res = await beneficiosRepository.findAll();
-          // setState(() {
-          //   _results = res;
-          // });
+          print(beneficio);
+          await Navigator.of(context)
+              .pushNamed(FormBenefitsScreen.routName, arguments: beneficio);
+          final response = await beneficioController.ListarBeneficios();
+          List<Beneficio> res = response[0].dados ?? [];
+          print(res);
+          setState(() {
+            _results = res;
+            _results_filtred = res;
+          });
           await _buscarTodos();
         },
-       ),
-       onTap: () async {
-        Beneficio beneficio = _results_filtred[index];
-        print(beneficio);
-        await Navigator.of(context).pushNamed(FormBenefitsScreen.routName, arguments: beneficio);
-        // List<Beneficio> res = await beneficiosRepository.findAll();
-        // setState(() {
-        //   _results = res;
-        // });
-        await _buscarTodos();
-       },
       ),
     );
   }
 
   Future<void> _buscarTodos() async {
-        //Atualiza a lista de pesquisa novamente
-    List<Beneficio> res = await beneficiosRepository.findAll();
+    //Atualiza a lista de pesquisa novamente
+    final response = await beneficioController.ListarBeneficios();
+    List<Beneficio> res = response[0].dados ?? [];
+    print(res);
     setState(() {
-        _results = res;
-        _results_filtred = res;
+      _results = res;
+      _results_filtred = res;
     });
   }
 
-  void _filtrar(String value){
+  void _filtrar(String value) {
     List<Beneficio> res = [];
-    if (value.isEmpty){
+    if (value.isEmpty) {
       _results_filtred = _results;
-    }else{
+    } else {
       res = _results
-          .where((item) => item.descricao!.toLowerCase().contains(value.toLowerCase()))
+          .where((item) =>
+              item.descricao!.toLowerCase().contains(value.toLowerCase()))
           .toList();
       setState(() {
-      _results_filtred = res;
-    });
+        _results_filtred = res;
+      });
     }
   }
 
   // void _delete(beneficio){
 
   //   BeneficiosFuncionarios funcBene = BeneficiosFuncionarios();
-    
-    
 
   //   for (funcBene in all_funcBene){
   //     if (funcBene.idBeneficios == beneficio.idBeneficios){
@@ -130,6 +149,4 @@ class _SearchBenefitsScreenState extends State<SearchBenefitsScreen> {
 
   //   beneficiosRepository.delete(beneficio);
   // }
-
-
 }

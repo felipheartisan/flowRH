@@ -43,8 +43,8 @@ class BeneficiosFuncionariosRepository{
     await databaseProvider.open();
     Database dt = databaseProvider.database;
     return await dt.delete("Beneficios_has_Funcionarios", 
-                  where : "idBeneficios = ?", 
-                  whereArgs:  ["${entity.idBeneficios}"]);
+                  where : "id = ?", 
+                  whereArgs:  ["${entity.id}"]);
   }
 
   Future<int>  update(BeneficiosFuncionarios entity) async{
@@ -56,17 +56,17 @@ class BeneficiosFuncionariosRepository{
                   whereArgs:  [entity.id_beneficios_funcionarios]);
   }
 
-  // Future<BeneficiosFuncionarios> findById(int Beneficios_idBeneficios, int Funcionarios_idFuncionarios) async{
+  // Future<BeneficiosFuncionarios> findById(int Beneficios_id, int Funcionarios_idFuncionarios) async{
   //   await databaseProvider.open();
   //   Database dt = databaseProvider.database;
   //   List<Map<String, Object?>> result = await dt.rawQuery(
   //     '''SELECT Beneficios.descricao as beneficio, Funcionarios.nome as funcionario  
   //         FROM Beneficios_has_Funcionarios as bf
   //         JOIN
-  //         Beneficios  ON bf.Beneficios_idBeneficios = Beneficios.idBeneficios
+  //         Beneficios  ON bf.Beneficios_id = Beneficios.id
   //         JOIN
   //         Funcionarios ON bf.Funcionarios_idFuncionarios = f.idFuncionarios;
-  //         WHERE bf.Beneficios_idBeneficios = ${Beneficios_idBeneficios} AND bf.Funcionarios_idFuncionarios = ${Funcionarios_idFuncionarios};
+  //         WHERE bf.Beneficios_id = ${Beneficios_id} AND bf.Funcionarios_idFuncionarios = ${Funcionarios_idFuncionarios};
   //     ''');
   //   //Se retornou resultados
   //   var beneficios_funcionarios = BeneficiosFuncionarios();
@@ -88,7 +88,7 @@ SELECT bf.*,
       b.descricao AS NomeBeneficio
 FROM Beneficios_has_Funcionarios as bf
 JOIN Funcionarios as f ON bf.idFuncionarios = f.idFuncionarios
-JOIN Beneficios b ON bf.idBeneficios = b.idBeneficios;
+JOIN Beneficios b ON bf.id = b.id;
 
 ''');
     

@@ -1,85 +1,116 @@
-import 'package:flow_rh/data/database_provider.dart';
+import 'dart:convert';
+
+import 'package:flow_rh/domain/dto/beneficio_criacao_dto.dart';
+import 'package:flow_rh/domain/http/http_client.dart';
 import 'package:flow_rh/domain/models/beneficios.dart';
-import 'package:flow_rh/domain/repositories/beneficios_funcionarios_repository.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:flow_rh/domain/models/response_model.dart';
 
-class BeneficiosRepository{
-  late DatabaseProvider databaseProvider;
+abstract class IBeneficiosRepository {
+  Future<List<ResponseModel<Beneficio>>> listarBeneficios();
 
-  BeneficiosRepository(this.databaseProvider);
+  Future<List<ResponseModel<Beneficio>>> deletarBeneficio(int idBeneficio);
 
-  Future<int> insert(Beneficio entity) async{
-    try{
-      print("salvou 000");
-       await databaseProvider.open();
-      Database dt = databaseProvider.database;
-      return await dt.insert("Beneficios", entity.toMap());
-    } on Exception catch (e){
-      throw Exception(e);
-    }finally{
-      if (databaseProvider.database.isOpen){
-        databaseProvider.database.close();
-      }
+  Future<List<ResponseModel<Beneficio>>> criarBeneficio(BeneficioCriacaoDto beneficioCriacaoDto);
+
+  Future<List<ResponseModel<Beneficio>>> editarBeneficio(Beneficio beneficioEdicaoDto);
+}
+
+class BeneficiosRepository implements IBeneficiosRepository {
+  final IHttpClient client;
+
+  BeneficiosRepository({required this.client});
+  
+  @override
+  Future<List<ResponseModel<Beneficio>>> listarBeneficios() async{
+    var responseJson = await client.get(
+        url: 'http://localhost:5003/api/Beneficio/ListarBeneficios');
+
+    if (responseJson != null) {
+      final responseMap = jsonDecode(responseJson.body) as Map<String, dynamic>;
+
+      var result = ResponseModel<Beneficio>.fromMap(
+        responseMap,
+        (map) => Beneficio.fromMap(map),
+      );
+
+      return [result];
+    } else {
+      throw Exception('Failed to load users');
     }
-   
-    
   }
+  
+  @override
+  Future<List<ResponseModel<Beneficio>>> deletarBeneficio(int idBeneficio) async{
+    final responseJson = await client.delete(
+        url: "http://localhost:5003/api/Beneficio/DeletarBeneficio",
+        id: idBeneficio);
 
-  Future<int>  delete(Beneficio entity) async{
-    await databaseProvider.open();
-    Database dt = databaseProvider.database;
-    BeneficiosFuncionariosRepository beneficiosFuncionariosRepository = BeneficiosFuncionariosRepository(databaseProvider);
+    if (responseJson != null) {
+      final responseMap = jsonDecode(responseJson.body) as Map<String, dynamic>;
 
-    await beneficiosFuncionariosRepository.deletebyBene(entity);
+      var result = ResponseModel<Beneficio>.fromMap(
+        responseMap,
+        (map) => Beneficio.fromMap(map),
+      );
 
-    return await dt.delete("Beneficios", 
-                  where : "idBeneficios = ?", 
-                  whereArgs:  ["${entity.idBeneficios}"]);
-  }
-
-  Future<int>  update(Beneficio entity) async{
-    await databaseProvider.open();
-    Database dt = databaseProvider.database;
-    return await dt.update("Beneficios",
-                    entity.toMap(), 
-                    where : "idBeneficios = ?", 
-                  whereArgs:  ["${entity.idBeneficios}"]);
-  }
-
-  Future<Beneficio> findById(int idBeneficios) async{
-    await databaseProvider.open();
-    Database dt = databaseProvider.database;
-    List<Map<String, Object?>> result = await dt.rawQuery("SELECT * FROM Beneficios WHERE idBeneficios = $idBeneficios");
-    //Se retornou resultados
-    var beneficio = Beneficio();
-    if (result.isNotEmpty){
-        Map<String, Object?> item = result[0];
-        beneficio.idBeneficios = item["idBeneficios"] as int;
-        beneficio.descricao = item["descricao"] as String;
-        
+      return [result];
+    } else {
+      throw Exception('Falha ao deletar o usuário');
     }
-    return beneficio;
+  }
+  
+  @override
+  Future<List<ResponseModel<Beneficio>>> criarBeneficio(BeneficioCriacaoDto beneficioCriacaoDto) async{
+    final jsonBody = jsonEncode(beneficioCriacaoDto.toMap());
+
+    print(jsonBody);
+
+    final responseJson = await client.post(
+        url: 'http://localhost:5003/api/Beneficio/CriarBeneficio',
+        body: jsonBody);
+
+    print(responseJson);
+
+    if (responseJson != null) {
+      final responseMap = jsonDecode(responseJson.body) as Map<String, dynamic>;
+
+      var result = ResponseModel<Beneficio>.fromMap(
+        responseMap,
+        (map) => Beneficio.fromMap(map),
+      );
+
+      return [result];
+    } else {
+      throw Exception('Falha ao salvar o usuário');
+    }
+  }
+  
+  @override
+  Future<List<ResponseModel<Beneficio>>> editarBeneficio(Beneficio beneficioEdicaoDto) async{
+    final jsonBody = jsonEncode(beneficioEdicaoDto.toMap());
+
+    print(jsonBody);
+
+    final responseJson = await client.put(
+        url: 'http://localhost:5003/api/Beneficio/EditarBeneficio',
+        body: jsonBody);
+
+    print(responseJson);
+
+    if (responseJson != null) {
+      final responseMap = jsonDecode(responseJson.body) as Map<String, dynamic>;
+
+      var result = ResponseModel<Beneficio>.fromMap(
+        responseMap,
+        (map) => Beneficio.fromMap(map),
+      );
+
+      return [result];
+    } else {
+      throw Exception('Falha ao salvar o usuário');
+    }
   }
 
-  /// Busca todos os registro do banco de dados convertido para
-  /// um objeto do tipo List<Estado>.   
-  Future<List<Beneficio>> findAll() async{
-    await databaseProvider.open();
-    Database dt = databaseProvider.database;
-    List<Map<String, Object?>> result = await dt.rawQuery("SELECT * FROM Beneficios");
-        
-    List<Beneficio> beneficioResults = [];
-    
-    //Se retornou resultados
-    if (result.isNotEmpty){
-        for (int i = 0; i < result.length; i++){            
-            Map<String, Object?> item = result[i];
-            //Convertendo um Map para o objeto apropriado
-            Beneficio beneficio = Beneficio.fromMap(item);
-            beneficioResults.add(beneficio);
-        }
-    }
-     
-    return beneficioResults;
-  }  
+
+
 }

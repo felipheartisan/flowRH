@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flow_rh/domain/dto/avaliacao_criacao_dto.dart';
+import 'package:flow_rh/domain/dto/avaliacao_edicao_dto.dart';
 import 'package:flow_rh/domain/dto/funcionario_criacao_dto.dart';
 import 'package:flow_rh/domain/http/http_client.dart';
 import 'package:flow_rh/domain/models/avaliacoes_funcionarios.dart';
@@ -16,8 +17,9 @@ abstract class IAvaliacaoRepository {
   Future<List<ResponseModel<Avaliacao>>> deletarAvaliacao(
   int idAvaliacao);
 
-  // Future<List<ResponseModel<Funcionario>>> atualizarFuncionario(
-  //     Funcionario funcionarioEdicaoDto);
+
+  Future<List<ResponseModel<Avaliacao>>> atualizarAvaliacao(
+      AvaliacaoEdicaoDto avaliacaoEdicaoDto);
 }
 
 class AvaliacaoRepository extends IAvaliacaoRepository {
@@ -72,6 +74,32 @@ class AvaliacaoRepository extends IAvaliacaoRepository {
 
     final responseJson = await client.post(
         url: 'http://localhost:5003/api/Avaliacao/Criaravaliacao',
+        body: jsonBody);
+
+    print(responseJson);
+
+    if (responseJson != null) {
+      final responseMap = jsonDecode(responseJson.body) as Map<String, dynamic>;
+
+      var result = ResponseModel<Avaliacao>.fromMap(
+        responseMap,
+        (map) => Avaliacao.fromMap(map),
+      );
+
+      return [result];
+    } else {
+      throw Exception('Falha ao salvar o usuário');
+    }
+  }
+  
+  @override
+  Future<List<ResponseModel<Avaliacao>>> atualizarAvaliacao(AvaliacaoEdicaoDto avaliacaoEdicaoDto) async {
+   final jsonBody = jsonEncode(avaliacaoEdicaoDto.toMap());
+
+    print(jsonBody);
+
+    final responseJson = await client.put(
+        url: 'http://localhost:5003/api/Avaliacao/Editaravaliacao',
         body: jsonBody);
 
     print(responseJson);

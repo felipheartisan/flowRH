@@ -2,6 +2,7 @@ import 'package:flow_rh/data/database_provider.dart';
 import 'package:flow_rh/domain/controllers/avaliacao_controller.dart';
 import 'package:flow_rh/domain/controllers/funcionario_controller.dart';
 import 'package:flow_rh/domain/dto/avaliacao_criacao_dto.dart';
+import 'package:flow_rh/domain/dto/avaliacao_edicao_dto.dart';
 import 'package:flow_rh/domain/http/http_client.dart';
 import 'package:flow_rh/domain/models/avaliacoes_funcionarios.dart';
 import 'package:flow_rh/domain/models/funcionarios.dart';
@@ -203,48 +204,46 @@ class _FormAvaliationScreenState extends State<FormAvaliationScreen> {
 
         result = await avaliacaoController.criarAvaliacao(avaliacaoCriacaoDto);
       } else {
-        //   await avaliacaoRepository.update(_avaliacao);
-        //     ScaffoldMessenger.of(context).showSnackBar(
-        //     const SnackBar(
-        //       content: Text(
-        //           'Avaliação atualizada'),
-        //     ),);
+        var avaliacaoEdicaoDto = AvaliacaoEdicaoDto(
+            id: _avaliacao.id,
+            nota: _avaliacao.nota,
+            cursosFeitos: _avaliacao.cursosFeitos,
+            cursosFazer: _avaliacao.cursosInteresse,
+            atividades: _avaliacao.atividades,
+            mesReferencia: _avaliacao.mesReferencia,
+            anoReferencia: _avaliacao.anoReferencia,
+            idFuncionario: _avaliacao.funcionario?.id);
 
-        //   Navigator.pushNamed(context, HomeScreen.routName);
-        // }
-
-        //   List<Avaliacao> res = await avaliacaoRepository.findAll();
-        //                          setState(() {
-        //                            _results = res;
-        //                          });
+        result =
+            await avaliacaoController.atualizarAvaliacao(avaliacaoEdicaoDto);
       }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result[0].mensagem),
+        ),
+      );
+
+      final response = await avaliacaoController.listarAvaliacoes();
+
+      List<Avaliacao> res = response[0].dados ?? [];
+
+      final responseFuncionario =
+          await funcionarioController.listarFuncionarios();
+      List<Funcionario> resFuncionario = responseFuncionario[0].dados ?? [];
+
+      setState(() {
+        _results = res;
+        _funcionarios = resFuncionario;
+      });
+
+      // Limpar os campos após salvar
+      _notaController.clear();
+      _cursos_feitosController.clear();
+      _cursos_interesseController.clear();
+      _atividadesController.clear();
+      _mesController.clear();
+      _anoController.clear();
     }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(result[0].mensagem),
-      ),
-    );
-
-    final response = await avaliacaoController.listarAvaliacoes();
-
-    List<Avaliacao> res = response[0].dados ?? [];
-
-    final responseFuncionario =
-        await funcionarioController.listarFuncionarios();
-    List<Funcionario> resFuncionario = responseFuncionario[0].dados ?? [];
-
-    setState(() {
-      _results = res;
-      _funcionarios = resFuncionario;
-    });
-
-    // Limpar os campos após salvar
-    _notaController.clear();
-    _cursos_feitosController.clear();
-    _cursos_interesseController.clear();
-    _atividadesController.clear();
-    _mesController.clear();
-    _anoController.clear();
   }
 }

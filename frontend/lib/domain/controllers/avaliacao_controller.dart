@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flow_rh/domain/dto/avaliacao_criacao_dto.dart';
+import 'package:flow_rh/domain/dto/avaliacao_edicao_dto.dart';
 import 'package:flow_rh/domain/dto/funcionario_criacao_dto.dart';
 import 'package:flow_rh/domain/models/avaliacoes_funcionarios.dart';
 import 'package:flow_rh/domain/models/funcionarios.dart';
@@ -37,6 +38,13 @@ class AvaliacaoController {
     // Converte o ViewModel para JSON antes de enviar
     // Envia para o repositório
     final result = await repository.criarAvaliacao(avaliacaoCriacaoDto);    
+    return result;
+  }
+
+  Future<List<ResponseModel<Avaliacao>>> atualizarAvaliacao(AvaliacaoEdicaoDto avaliacaoEdicaoDto) async {
+    // Converte o ViewModel para JSON antes de enviar
+    // Envia para o repositório
+    final result = await repository.atualizarAvaliacao(avaliacaoEdicaoDto);    
     return result;
   }
 

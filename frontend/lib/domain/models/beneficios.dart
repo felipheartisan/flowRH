@@ -2,18 +2,18 @@
 import 'dart:convert';
 
 class Beneficio {
-  int? idBeneficios;
+  int? id;
   String? dependentes;
   String? descricao;
   Beneficio({
-    this.idBeneficios,
+    this.id,
     this.dependentes,
     this.descricao
   });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'idBeneficios': idBeneficios,
+      'id': id,
       'dependentes': dependentes,
       'descricao': descricao,
     };
@@ -21,7 +21,7 @@ class Beneficio {
 
   factory Beneficio.fromMap(Map<String, dynamic> map) {
     return Beneficio(
-      idBeneficios: map['idBeneficios'] != null ? map['idBeneficios'] as int : null,
+      id: map['id'] != null ? map['id'] as int : null,
       dependentes: map['dependentes'] != null ? map['dependentes'] as String : null,
       descricao: map['descricao'] != null ? map['descricao'] as String : null,
     );
@@ -29,12 +29,12 @@ class Beneficio {
 
 
   Beneficio copyWith({
-    int? idBeneficios,
+    int? id,
     String? dependentes,
     String? descricao,
   }) {
     return Beneficio(
-      idBeneficios: idBeneficios ?? this.idBeneficios,
+      id: id ?? this.id,
       dependentes: dependentes ?? this.dependentes,
       descricao: descricao ?? this.descricao,
     );
@@ -45,18 +45,18 @@ class Beneficio {
   factory Beneficio.fromJson(String source) => Beneficio.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() => 'Beneficio(idBeneficios: $idBeneficios, dependentes: $dependentes, descricao: $descricao)';
+  String toString() => 'Beneficio(id: $id, dependentes: $dependentes, descricao: $descricao)';
 
   @override
   bool operator ==(covariant Beneficio other) {
     if (identical(this, other)) return true;
   
     return 
-      other.idBeneficios == idBeneficios &&
+      other.id == id &&
       other.dependentes == dependentes &&
       other.descricao == descricao;
   }
 
   @override
-  int get hashCode => idBeneficios.hashCode ^ dependentes.hashCode ^ descricao.hashCode;
+  int get hashCode => id.hashCode ^ dependentes.hashCode ^ descricao.hashCode;
 }

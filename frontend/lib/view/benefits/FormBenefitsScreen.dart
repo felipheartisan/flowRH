@@ -1,7 +1,11 @@
 import 'package:flow_rh/data/database_provider.dart';
+import 'package:flow_rh/domain/controllers/beneficio_controller.dart';
+import 'package:flow_rh/domain/dto/beneficio_criacao_dto.dart';
 import 'package:flow_rh/domain/models/beneficios.dart';
 import 'package:flow_rh/domain/repositories/beneficios_repository.dart';
 import 'package:flutter/material.dart';
+
+import '../../domain/http/http_client.dart';
 
 class FormBenefitsScreen extends StatefulWidget {
   static const String routName = "form.benefit";
@@ -13,11 +17,12 @@ class FormBenefitsScreen extends StatefulWidget {
 }
 
 class _FormBenefitsScreenState extends State<FormBenefitsScreen> {
+
+  final BeneficioController beneficioController =
+      BeneficioController(BeneficiosRepository(client: HttpClient()));
    // ignore: unused_field
    List<Beneficio> _results = [];
 
-  DatabaseProvider databaseProvider = DatabaseProvider();
-  late BeneficiosRepository beneficioRepository;
   
   @override
   void initState(){
@@ -26,10 +31,17 @@ class _FormBenefitsScreenState extends State<FormBenefitsScreen> {
   }
 
   void initDatabase() async {
-    await databaseProvider.open();
-    beneficioRepository = BeneficiosRepository(databaseProvider);
-    _results = await beneficioRepository.findAll();
-    List<Beneficio> res = await beneficioRepository.findAll();
+    // await databaseProvider.open();
+    // beneficioRepository = BeneficiosRepository(databaseProvider);
+    // _results = await beneficioRepository.findAll();
+    // List<Beneficio> res = await beneficioRepository.findAll();
+    // setState(() {
+    //   _results = res;
+    // });
+
+    final response = await beneficioController.ListarBeneficios();
+    List<Beneficio> res = response[0].dados ?? [];
+    print(res);
     setState(() {
       _results = res;
     });
@@ -127,37 +139,45 @@ class _FormBenefitsScreenState extends State<FormBenefitsScreen> {
   }
 
   void _salvar() async {
+
+    var result;
     _descController.text = beneficio_selected!;
 
     _beneficio.dependentes = _dependentesController.text;
     _beneficio.descricao = _descController.text;
 
-    if (_beneficio.idBeneficios == null)
+    if (_beneficio.id == null)
     {
-      await beneficioRepository.insert(_beneficio);
-      ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-            'Beneficio salvo'),
-      ),
-      
-    );
+      BeneficioCriacaoDto beneficioCriacaoDto = BeneficioCriacaoDto(dependentes: _beneficio.dependentes, descricao: _beneficio.descricao);
+      result = await beneficioController.CriarBeneficio(beneficioCriacaoDto);
+     
     }
     else
     {
-      await beneficioRepository.update(_beneficio);
-      ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-            'Beneficio atualizado'),
-      ),
-    );
+      result = await beneficioController.AtualizarBeneficio(_beneficio);
     }
-    List<Beneficio> res = await beneficioRepository.findAll();
-                           setState(() {
-                             _results = res;
-                           });
-    
+    // List<Beneficio> res = await beneficioRepository.findAll();
+    //                        setState(() {
+    //                          _results = res;
+    //                        });
+     ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(result[0].mensagem),
+      ),
+      
+    );
+    final response = await beneficioController.ListarBeneficios();
 
-}
+    List<Beneficio> res = response[0].dados ?? [];
+
+    setState(() {
+      _results = res;
+    });
+
+    // Limpar os campos após salvar
+    _dependentesController.clear();
+    _descController.clear();
+ 
+  }
+
 }

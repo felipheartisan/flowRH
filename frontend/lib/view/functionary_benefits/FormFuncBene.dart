@@ -165,7 +165,7 @@ class _FormFuncBeneScreenState extends State<FormFuncBeneScreen> {
             //           itemBuilder: (context, index) {
             //             final item = data[index];
             //             return ListTile(
-            //               title: Text('Benefício: ${item.idBeneficios.nome}, Funcionário: ${item.idFuncionarios.nome}'),
+            //               title: Text('Benefício: ${item.id.nome}, Funcionário: ${item.idFuncionarios.nome}'),
             //             );
             //           },
             //         );
@@ -186,7 +186,7 @@ void _salvar() async {
         _funcionarioController.text = _selectedFuncionario!.nome!;
         _beneficioController.text = _selectedBeneficio!.descricao!;
 
-         _beneficio_funcionario.idBeneficios = _selectedBeneficio?.idBeneficios;
+         _beneficio_funcionario.idBeneficios = _selectedBeneficio?.id;
          _beneficio_funcionario.idFuncionarios = _selectedFuncionario?.id;
 
          _beneficio_funcionario.nome_funcionario = _funcionarioController.text;
