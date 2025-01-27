@@ -163,8 +163,8 @@ class _FormFuncBeneScreenState extends State<FormFuncBeneScreen> {
     _beneficio_funcionario.funcionario = _selectedFuncionario;
 
       var beneficioFuncionarioCriacaoDto = BeneficioFuncionarioCriacaoDto(
-          idFuncionario: _beneficio_funcionario.funcionario!.id,
-          idBeneficio: _beneficio_funcionario.beneficio!.id);
+          funcionarioId: _beneficio_funcionario.funcionario!.id,
+          beneficioId: _beneficio_funcionario.beneficio!.id);
 
       result = await beneficiosFuncController
           .addBeneficiosFuncionarios(beneficioFuncionarioCriacaoDto);

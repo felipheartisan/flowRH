@@ -2,34 +2,34 @@
 import 'dart:convert';
 
 class BeneficioFuncionarioCriacaoDto {
-  int? idFuncionario;
-  int? idBeneficio;
+  int? funcionarioId;
+  int? beneficioId;
   BeneficioFuncionarioCriacaoDto({
-    this.idFuncionario,
-    this.idBeneficio,
+    this.funcionarioId,
+    this.beneficioId,
   });
 
   BeneficioFuncionarioCriacaoDto copyWith({
-    int? idFuncionario,
-    int? idBeneficio,
+    int? funcionarioId,
+    int? beneficioId,
   }) {
     return BeneficioFuncionarioCriacaoDto(
-      idFuncionario: idFuncionario ?? this.idFuncionario,
-      idBeneficio: idBeneficio ?? this.idBeneficio,
+      funcionarioId: funcionarioId ?? this.funcionarioId,
+      beneficioId: beneficioId ?? this.beneficioId,
     );
   }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'idFuncionario': idFuncionario,
-      'idBeneficio': idBeneficio,
+      'funcionarioId': funcionarioId,
+      'beneficioId': beneficioId,
     };
   }
 
   factory BeneficioFuncionarioCriacaoDto.fromMap(Map<String, dynamic> map) {
     return BeneficioFuncionarioCriacaoDto(
-      idFuncionario: map['idFuncionario'] != null ? map['idFuncionario'] as int : null,
-      idBeneficio: map['idBeneficio'] != null ? map['idBeneficio'] as int : null,
+      funcionarioId: map['funcionarioId'] != null ? map['funcionarioId'] as int : null,
+      beneficioId: map['beneficioId'] != null ? map['beneficioId'] as int : null,
     );
   }
 
@@ -38,17 +38,17 @@ class BeneficioFuncionarioCriacaoDto {
   factory BeneficioFuncionarioCriacaoDto.fromJson(String source) => BeneficioFuncionarioCriacaoDto.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() => 'BeneficioFuncionarioCriacaoDto(idFuncionario: $idFuncionario, idBeneficio: $idBeneficio)';
+  String toString() => 'BeneficioFuncionarioCriacaoDto(funcionarioId: $funcionarioId, beneficioId: $beneficioId)';
 
   @override
   bool operator ==(covariant BeneficioFuncionarioCriacaoDto other) {
     if (identical(this, other)) return true;
   
     return 
-      other.idFuncionario == idFuncionario &&
-      other.idBeneficio == idBeneficio;
+      other.funcionarioId == funcionarioId &&
+      other.beneficioId == beneficioId;
   }
 
   @override
-  int get hashCode => idFuncionario.hashCode ^ idBeneficio.hashCode;
+  int get hashCode => funcionarioId.hashCode ^ beneficioId.hashCode;
 }
