@@ -264,3 +264,4 @@ C:\projetos\ASP NET\WebApiFlowRH\FlowRhApi\obj\Debug\net8.0\refint\FlowRhApi.dll
 C:\projetos\ASP NET\WebApiFlowRH\FlowRhApi\obj\Debug\net8.0\FlowRhApi.pdb
 C:\projetos\ASP NET\WebApiFlowRH\FlowRhApi\obj\Debug\net8.0\FlowRhApi.genruntimeconfig.cache
 C:\projetos\ASP NET\WebApiFlowRH\FlowRhApi\obj\Debug\net8.0\ref\FlowRhApi.dll
+C:\projetos\ASP NET\WebApiFlowRH\FlowRhApi\obj\Debug\net8.0\FlowRhApi.sourcelink.json

@@ -1,6 +1,7 @@
 using FlowRhApi.Dto.Usuario;
 using FlowRhApi.Models;
 using FlowRhApi.Repositories.Usuario;
+using FlowRhApi.ViewModel.Login;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FlowRhApi.Controllers
@@ -14,6 +15,13 @@ namespace FlowRhApi.Controllers
         public UsuarioController(IUsuarioInterface usuarioInterface)
         {
             _usuarioInterface = usuarioInterface;
+        }
+
+        [HttpPost("Autenticar")]
+        public async Task<ActionResult<ResponseModel<UsuarioModel>>> Autenticar([FromBody]LoginViewModel loginViewModel)
+        {
+            var usuariosListReponse = await _usuarioInterface.Autenticar(loginViewModel);
+            return Ok(usuariosListReponse);
         }
 
         [HttpGet("ListarUsuarios")]

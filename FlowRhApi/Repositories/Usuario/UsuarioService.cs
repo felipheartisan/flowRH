@@ -1,7 +1,10 @@
 using Azure;
+using ControleEnderecos.Helper;
 using FlowRhApi.Data;
 using FlowRhApi.Dto.Usuario;
 using FlowRhApi.Models;
+using FlowRhApi.ViewModel.Login;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace FlowRhApi.Repositories.Usuario
@@ -50,13 +53,23 @@ namespace FlowRhApi.Repositories.Usuario
 
             try
             {
+
                 var novoUsuario = new UsuarioModel()
                 {
                     Nome = usuarioCriacaoDto.Nome,
                     Email = usuarioCriacaoDto.Email,
-                    Senha = usuarioCriacaoDto.Senha,
                    
                 };
+
+                 byte[] salt = Helper.GenerateSaltToBytes();
+            
+                novoUsuario.Salt = Convert.ToBase64String(salt);
+    
+                var passNew = Helper.GenerateSHA256Hash(usuarioCriacaoDto.Senha);
+    
+                var passHash = Helper.GetPasswordHash(passNew, salt);
+    
+                novoUsuario.Senha = passHash;
 
                  _context.Usuarios.Add(novoUsuario);
                 await _context.SaveChangesAsync();
@@ -176,6 +189,47 @@ namespace FlowRhApi.Repositories.Usuario
 
                 return response;
             }
+        }
+
+        public async Task<ResponseModel<UsuarioModel>> Autenticar(LoginViewModel loginViewModel)
+        {
+            ResponseModel<UsuarioModel> response = new ResponseModel<UsuarioModel>();
+            /*
+             * Verificando se o usuário existe no sistema
+             */
+            var usuario = await _context.Usuarios.FirstOrDefaultAsync(
+                entidade => entidade.Nome == loginViewModel.Login
+                            || entidade.Email == loginViewModel.Login);
+
+            if (usuario == null)
+            {
+                response.Mensagem = "Usuário ou senha Inválidos.";
+                response.Status = false;
+                return response;
+            }
+
+            //Converte o salt armazenado na tabela do usuario para byte[]
+            byte[] salt = Convert.FromBase64String(usuario.Salt);
+
+
+            //Pega a senha que o usuario digitou durante o login e aplica o hash
+            var password = Helper.GenerateSHA256Hash(loginViewModel.Password);
+
+            //Pega a senha digitada que foi criptografada em hash e salt para retornar o valor original
+            var passHash = Helper.GetPasswordHash(password, salt);
+
+
+            if ((usuario == null) || (passHash != usuario.Senha))
+            {
+                response.Mensagem = "Usuário ou senha Inválidos.";
+                response.Status = false;
+                return response;
+            }
+
+            response.Dados = usuario;
+            response.Status = true;
+            response.Mensagem= "Usuário logado";
+            return response;
         }
     }
 }
