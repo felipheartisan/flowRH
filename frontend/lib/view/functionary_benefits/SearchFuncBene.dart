@@ -1,4 +1,6 @@
 import 'package:flow_rh/data/database_provider.dart';
+import 'package:flow_rh/domain/controllers/beneficio_funcionario_controller.dart';
+import 'package:flow_rh/domain/http/http_client.dart';
 import 'package:flow_rh/domain/models/avaliacoes_funcionarios.dart';
 import 'package:flow_rh/domain/models/beneficios_funcionarios.dart';
 import 'package:flow_rh/domain/repositories/avaliacoes_repository.dart';
@@ -22,8 +24,9 @@ class _SearchfuncbenefitScreenState extends State<SearchfuncbeneScreen>{
   List<BeneficiosFuncionarios> _results = [];
   List<BeneficiosFuncionarios> _results_filtred = [];
   
-  DatabaseProvider databaseProvider = DatabaseProvider();
-  late BeneficiosFuncionariosRepository beneficiosFuncionariosRepository;
+  final BeneficioFuncionarioController controller =
+      BeneficioFuncionarioController(BeneficiosFuncionariosRepository(client: HttpClient()));
+  
 
   @override
   void initState(){
@@ -32,14 +35,14 @@ class _SearchfuncbenefitScreenState extends State<SearchfuncbeneScreen>{
   }
 
   void initDatabase() async {
-    await databaseProvider.open();
-    beneficiosFuncionariosRepository = BeneficiosFuncionariosRepository(databaseProvider);
-    List<BeneficiosFuncionarios> res = await beneficiosFuncionariosRepository.findAll();
-
+    final response = await controller.listarBeneficiosFuncionarios();
+    List<BeneficiosFuncionarios> res = response[0].dados ?? [];
     setState(() {
       _results = res;
       _results_filtred = res;
     });
+
+    
     
   }
 
@@ -78,12 +81,17 @@ class _SearchfuncbenefitScreenState extends State<SearchfuncbeneScreen>{
   Widget _createItem(BuildContext context, int index) {
      return Card(
       child: ListTile(   
-        title: Text('Beneficio: ${_results_filtred[index].descricao_beneficio}''\n'+ 
-                    'Funcionario: ${_results_filtred[index].nome_funcionario}' ),
+        title: Text('Beneficio: ${_results_filtred[index].beneficio!.descricao}''\n'+ 
+                    'Funcionario: ${_results_filtred[index].funcionario!.nome}' ),
         leading: IconButton(icon: const Icon(Icons.delete),
         onPressed: () async {
           BeneficiosFuncionarios beneficiosFuncionarios = _results_filtred[index];
-          beneficiosFuncionariosRepository.delete(beneficiosFuncionarios);
+          final response =
+                await controller.deletarBeneficiosFuncionarios(beneficiosFuncionarios.id!);
+            List<BeneficiosFuncionarios> res = response[0].dados ?? [];
+            setState(() {
+              _results = res;
+            });
           
           // List<BeneficiosFuncionarios> res = await beneficiosFuncionariosRepository.findAll();
           // setState(() {
@@ -108,10 +116,11 @@ class _SearchfuncbenefitScreenState extends State<SearchfuncbeneScreen>{
 
     Future<void> _buscarTodos() async {
         //Atualiza a lista de pesquisa novamente
-    List<BeneficiosFuncionarios> res = await beneficiosFuncionariosRepository.findAll();
+    final response = await controller.listarBeneficiosFuncionarios();
+    List<BeneficiosFuncionarios> res = response[0].dados ?? [];
     setState(() {
-        _results = res;
-        _results_filtred = res;
+      _results = res;
+      _results_filtred = res;
     });
   }
 
@@ -122,8 +131,8 @@ class _SearchfuncbenefitScreenState extends State<SearchfuncbeneScreen>{
       _results_filtred = _results;
     }else{
        res = _results
-          .where((item) => item.nome_funcionario!.toLowerCase().contains(value.toLowerCase()) 
-          || item.descricao_beneficio!.toLowerCase().contains(value.toLowerCase()))
+          .where((item) => item.funcionario!.nome!.toLowerCase().contains(value.toLowerCase()) 
+          || item.beneficio!.descricao!.toLowerCase().contains(value.toLowerCase()))
           .toList();
       setState(() {
         _results_filtred = res;

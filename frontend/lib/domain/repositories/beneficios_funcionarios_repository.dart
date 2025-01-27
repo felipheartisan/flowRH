@@ -1,110 +1,90 @@
+import 'dart:convert';
+
 import 'package:flow_rh/data/database_provider.dart';
+import 'package:flow_rh/domain/dto/beneficio_funcionario_criacao_dto.dart';
+import 'package:flow_rh/domain/http/http_client.dart';
 import 'package:flow_rh/domain/models/beneficios.dart';
 import 'package:flow_rh/domain/models/beneficios_funcionarios.dart';
 import 'package:flow_rh/domain/models/funcionarios.dart';
+import 'package:flow_rh/domain/models/response_model.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-class BeneficiosFuncionariosRepository{
-  late DatabaseProvider databaseProvider;
-  BeneficiosFuncionariosRepository(this.databaseProvider);
+abstract class IBeneficiosFuncionariosRepository{
+  Future<List<ResponseModel<BeneficiosFuncionarios>>> getBeneficiosFuncionarios();
+  Future<List<ResponseModel<BeneficiosFuncionarios>>> addBeneficiosFuncionarios(BeneficioFuncionarioCriacaoDto beneficiosFuncionarioCriacaoDto);
+  Future<List<ResponseModel<BeneficiosFuncionarios>>> deleteBeneficiosFuncionarios(int id);
+}
 
-  Future<int> insert(BeneficiosFuncionarios entity) async {
-    try{
-      print("salvou 000");
-       await databaseProvider.open();
-      Database dt = databaseProvider.database;
-      return await dt.insert("Beneficios_has_Funcionarios", entity.toMap());
-    } on Exception catch (e){
-      throw Exception(e);
-    }finally{
-      if (databaseProvider.database.isOpen){
-        databaseProvider.database.close();
-      }
+class BeneficiosFuncionariosRepository implements IBeneficiosFuncionariosRepository{
+  final IHttpClient client;
+
+  BeneficiosFuncionariosRepository({required this.client});
+  
+  @override
+  Future<List<ResponseModel<BeneficiosFuncionarios>>> addBeneficiosFuncionarios(beneficiosFuncionarioCriacaoDto) async {
+    final jsonBody = jsonEncode(beneficiosFuncionarioCriacaoDto.toMap());
+
+    print(jsonBody);
+
+    final responseJson = await client.post(
+        url: 'http://localhost:5003/api/BeneficioFuncionario/VincularBeneficioFuncionario',
+        body: jsonBody);
+
+    print(responseJson);
+
+    if (responseJson != null) {
+      final responseMap = jsonDecode(responseJson.body) as Map<String, dynamic>;
+
+      var result = ResponseModel<BeneficiosFuncionarios>.fromMap(
+        responseMap,
+        (map) => BeneficiosFuncionarios.fromMap(map),
+      );
+
+      return [result];
+    } else {
+      throw Exception('Falha ao salvar o usuário');
+    }
+  }
+  
+  @override
+  Future<List<ResponseModel<BeneficiosFuncionarios>>> deleteBeneficiosFuncionarios(int id) async{
+    final responseJson = await client.delete(
+        url: "http://localhost:5003/api/BeneficioFuncionario/DeletarVinculoBeneficioFuncionario",
+        id: id);
+
+    if (responseJson != null) {
+      final responseMap = jsonDecode(responseJson.body) as Map<String, dynamic>;
+
+      var result = ResponseModel<BeneficiosFuncionarios>.fromMap(
+        responseMap,
+        (map) => BeneficiosFuncionarios.fromMap(map),
+      );
+
+      return [result];
+    } else {
+      throw Exception('Falha ao deletar o usuário');
+    }
+  }
+  
+  @override
+  Future<List<ResponseModel<BeneficiosFuncionarios>>> getBeneficiosFuncionarios() async{
+    var responseJson = await client.get(
+        url: 'http://localhost:5003/api/BeneficioFuncionario/ListarBeneficiosFuncionarios');
+
+    if (responseJson != null) {
+      final responseMap = jsonDecode(responseJson.body) as Map<String, dynamic>;
+
+      var result = ResponseModel<BeneficiosFuncionarios>.fromMap(
+        responseMap,
+        (map) => BeneficiosFuncionarios.fromMap(map),
+      );
+
+      return [result];
+    } else {
+      throw Exception('Failed to load users');
     }
   }
 
-  Future<int>  delete(BeneficiosFuncionarios entity) async{
-    await databaseProvider.open();
-    Database dt = databaseProvider.database;
-    return await dt.delete("Beneficios_has_Funcionarios", 
-                  where : "id_beneficios_funcionarios = ?", 
-                  whereArgs:  ["${entity.id_beneficios_funcionarios}"]);
-  }
 
-  Future<int>  deletebyfunc(Funcionario entity) async{
-    await databaseProvider.open();
-    Database dt = databaseProvider.database;
-    return await dt.delete("Beneficios_has_Funcionarios", 
-                  where : "idFuncionarios = ?", 
-                  whereArgs:  ["${entity.id}"]);
-  }
-
-  Future<int>  deletebyBene(Beneficio entity) async{
-    await databaseProvider.open();
-    Database dt = databaseProvider.database;
-    return await dt.delete("Beneficios_has_Funcionarios", 
-                  where : "id = ?", 
-                  whereArgs:  ["${entity.id}"]);
-  }
-
-  Future<int>  update(BeneficiosFuncionarios entity) async{
-    await databaseProvider.open();
-    Database dt = databaseProvider.database;
-    return await dt.update("Beneficios_has_Funcionarios",
-                    entity.toMap(), 
-                    where : "id_beneficios_funcionarios = ?", 
-                  whereArgs:  [entity.id_beneficios_funcionarios]);
-  }
-
-  // Future<BeneficiosFuncionarios> findById(int Beneficios_id, int Funcionarios_idFuncionarios) async{
-  //   await databaseProvider.open();
-  //   Database dt = databaseProvider.database;
-  //   List<Map<String, Object?>> result = await dt.rawQuery(
-  //     '''SELECT Beneficios.descricao as beneficio, Funcionarios.nome as funcionario  
-  //         FROM Beneficios_has_Funcionarios as bf
-  //         JOIN
-  //         Beneficios  ON bf.Beneficios_id = Beneficios.id
-  //         JOIN
-  //         Funcionarios ON bf.Funcionarios_idFuncionarios = f.idFuncionarios;
-  //         WHERE bf.Beneficios_id = ${Beneficios_id} AND bf.Funcionarios_idFuncionarios = ${Funcionarios_idFuncionarios};
-  //     ''');
-  //   //Se retornou resultados
-  //   var beneficios_funcionarios = BeneficiosFuncionarios();
-  //   if (result.isNotEmpty){
-  //       Map<String, Object?> item = result[0];
-  //       beneficios_funcionarios.descricao_beneficio = item["beneficio"] as String;
-  //       beneficios_funcionarios.nome_funcionario = item["funcionario"] as String;
-        
-  //   }
-  //   return beneficios_funcionarios;
-  // }
-
-  Future<List<BeneficiosFuncionarios>> findAll() async{
-    await databaseProvider.open();
-    Database dt = databaseProvider.database;
-    List<Map<String, Object?>> result = await dt.rawQuery('''
-SELECT bf.*,
-      f.nome AS NomeFuncionario,
-      b.descricao AS NomeBeneficio
-FROM Beneficios_has_Funcionarios as bf
-JOIN Funcionarios as f ON bf.idFuncionarios = f.idFuncionarios
-JOIN Beneficios b ON bf.id = b.id;
-
-''');
-    
-    List<BeneficiosFuncionarios> beneficiosFuncionariosresults = [];
-    
-    //Se retornou resultados
-    if (result.isNotEmpty){
-        for (int i = 0; i < result.length; i++){            
-            Map<String, Object?> item = result[i];
-            //Convertendo um Map para o objeto apropriado
-            BeneficiosFuncionarios beneficiosFuncionarios = BeneficiosFuncionarios.fromMap(item);
-            beneficiosFuncionariosresults.add(beneficiosFuncionarios);
-        }
-    }
-     
-    return beneficiosFuncionariosresults;
-  }  
 
 }
